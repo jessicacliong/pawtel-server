@@ -5,8 +5,7 @@ const express = require('express');
 const app = express();
 
 // Allow server flexibility to open on other ports if occupied
-const HOST = process.env.HOST || 'localhost';
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3030;
 
 
 // GET localhost:3000/
@@ -17,6 +16,8 @@ app.get("/", (request, response) => {
 
 });
 
-app.listen(PORT, HOST,() => {
-     console.log("Server is running on port: " + PORT);
+app.listen(PORT, () => {
+
+     console.log(`Server is running on port: " + ${PORT}`);
+
 });
