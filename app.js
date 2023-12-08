@@ -1,5 +1,5 @@
-// import the server package
 const express = require('express');
+const bookingRouter = require('./src/routes/bookings_routes');
 
 // make an instance of the server that we can customise and run
 const app = express();
@@ -10,11 +10,13 @@ const PORT = process.env.PORT || 3030;
 
 // GET localhost:3000/
 // app.get(route path, callback_function)
-app.get("/", (request, response) => {
+app.get("/", (req, res) => {
 
-     response.send('Hello World!');
+     res.send('Welcome to Pawtel!');
 
 });
+
+app.use('/bookings', bookingRouter);
 
 app.listen(PORT, () => {
 
