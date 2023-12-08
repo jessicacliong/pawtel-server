@@ -1,5 +1,5 @@
 const express = require('express');
-const bookingRouter = require('./src/routes/bookings_routes');
+const bookingRouter = require('./src/routes/BookingsRoutes');
 
 // make an instance of the server that we can customise and run
 const app = express();
