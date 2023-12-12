@@ -16,10 +16,12 @@ app.get("/", (req, res) => {
 
 });
 
+const bookingRouter = 
+require('.')
 app.use('/bookings', bookingRouter);
 
-app.listen(PORT, () => {
 
-     console.log(`Server is running on port: " + ${PORT}`);
-
-});
+module.exports = {
+     app, 
+     PORT
+}

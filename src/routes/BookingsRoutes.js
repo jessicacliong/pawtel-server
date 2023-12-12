@@ -1,4 +1,6 @@
 const express = require('express');
+
+
 const router = express.Router();
 
 const {
@@ -10,7 +12,7 @@ const {
 } = require('./src/controllers/BookingsController');
 
 // Read all bookings
-router.get('/', getBookings);
+router.get("/", getBookings);
 
 // Read booking with :id
 
