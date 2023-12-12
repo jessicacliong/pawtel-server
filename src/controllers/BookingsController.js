@@ -1,12 +1,12 @@
-const getBookings = (req, res) => {};
+const getBookings = (request, response) => {};
 
-const getBooking = (req, res) => {};
+const getBooking = (request, response) => {};
 
-const makeBooking = (req, res) => {};
+const makeBooking = (request, response) => {};
 
-const changeBooking = (req, res) => {};
+const changeBooking = (request, response) => {};
 
-const removeBooking = (req, res) => {};
+const removeBooking = (request, response) => {};
 
 module.exports = {
 	getBookings,
