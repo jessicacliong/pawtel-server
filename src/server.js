@@ -20,8 +20,6 @@ app.get("/", (req, res) => {
 
 });
 
-const bookingRouter = require('./controllers/BookingsController')
-
 app.use("/bookings", bookingRouter);
 
 

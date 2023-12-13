@@ -9,7 +9,7 @@ const {
 	makeBooking,
 	changeBooking,
 	removeBooking,
-} = require('./src/controllers/BookingsController');
+} = require('../controllers/BookingsController');
 
 // Read all bookings
 router.get("/", getBookings);
