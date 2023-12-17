@@ -1,7 +1,11 @@
-const {app, PORT} = require('./server');
+// This file handles the boot-up of the server
 
-app.listen(PORT, () => {
+require('dotenv').config();
 
-     console.log(`Pawtel is running on port: "${PORT}`);
+const { app } = require('./server');
+
+app.listen(3000, () => {
+
+     console.log('Pawtel server is running!');
 
 });
