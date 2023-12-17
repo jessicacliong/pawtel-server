@@ -50,7 +50,7 @@ const PetSchema = new Schema({
      }
 });
 
-PetSchemaSchema.pre(
+PetSchema.pre(
      'save',
      async function (next) {
           console.log("About to save a pet to PawtelDB");
@@ -65,7 +65,9 @@ module.exports = {
 }
 
 
-/*   const Pet = mongoose.model(`Pet`, {
+/*   Pet Model
+
+const Pet = mongoose.model(`Pet`, {
      name: String,
      animalType: String,
      breed: String,

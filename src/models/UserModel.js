@@ -3,17 +3,12 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const UserSchema = new Schema({
- 	username: {
- 		type: String,
- 		required: true,
- 		unique: true
- 	},
- 	password: {
- 		type: String,
- 		required: true,
- 		unique: false
- 	},
-     name: {
+     firstname: {
+          type: String,
+          required: true,
+          unique: false
+     },
+     lastname: {
           type: String,
           required: true,
           unique: false
@@ -23,16 +18,31 @@ const UserSchema = new Schema({
           required: true,
           unique: true
      },
-     phoneNumber: {
+     city: {
           type: String,
           required: true,
           unique: true
+     },
+     postcode: {
+          type: Number,
+          required: true,
+          unique: false
      },
      email: {
           type: String,
           required: true,
           unique: true
      },
+     username: {
+          type: String,
+          required: true,
+          unique: true
+     },
+     password: {
+          type: String,
+          required: true,
+          unique: false
+     }
  });
 
 UserSchema.pre(
@@ -51,10 +61,11 @@ module.exports = {
 
 /* User Model
 
-const User = mongoose.model(`User`, {
+const User
      name: String,
-     address: String, 
-     phoneNumber: Text,
+     address: String,
+     city: String,
+     postcode: Number,
      email: String,
      username: String,
      password: String,

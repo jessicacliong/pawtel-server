@@ -1,6 +1,5 @@
 const express = require('express');
 
-
 const router = express.Router();
 
 const {
@@ -9,7 +8,7 @@ const {
 	makeBooking,
 	changeBooking,
 	removeBooking,
-} = require('../controllers/BookingsController');
+} = require('../controllers/BookingController');
 
 // Read all bookings
 router.get("/", getBookings);
