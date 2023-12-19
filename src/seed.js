@@ -10,44 +10,15 @@ databaseConnect().then(async () => {
 
      console.log("Creating seed data!");
 
-     /* User Model
+     let newUser = await User.create({
+          firstName: "John",
+          lastName: "Smith",
+          email: "johnsmith@example.com",
+          username: "johnsmith",
+          password: "john12345",
+     });
 
-     const User = mongoose.model(`User`, {
-     firstname: "John",
-     lastname: "Smith",
-     username: String,
-     password: String
-
-     */
-
-     // let newUser = new User({
-     //      firstname: "John",
-     //      lastname: "Smith",
-     //      email: "johnsmith@example.com",
-     //      username: "john",
-     //      password: "john123"
-     // })
-
-     // await newUser.save().then(() => {
-     //      console.log(`${newUser.firstname} ${newUser.lastname} is in the DB`);
-
-     // });
-
-     /*   Pet Model
-     
-     const Pet = mongoose.model(`Pet`, {
-          name: String,
-          animalType: String,
-          breed: String,
-          colour: String,
-          gender: String,
-          age: Number,
-          favouriteToys: [String],
-          dietaryRequirements: [String],
-          allergies: [String],
-     }); */
-
-     let newPet = new Pet({
+     let newPet = await Pet.create({
           name: "Puma",
           animalType: "dog",
           breed: "Chow-chow",
@@ -57,36 +28,20 @@ databaseConnect().then(async () => {
           favouriteToys: ["ball","squeaky toy","favourite blanket"],
           dietaryRequirements: ["none"],
           allergies: ["none"],
-     })   
-
-     await newPet.save().then(() => {
-          console.log(`${newPet.name} is in the DB`);
-
+          user: newUser._id
      });
 
 
-     /* Booking Model
-     
-     const Booking = mongoose.model(`Booking`, {
-     roomType: String,
-     startDate: Date,
-     endDate: Date
+     let newBooking = await Booking.create({
+          roomType: "Standard",
+          startDate: new Date('2023-01-01T09:00:00Z'),
+          endDate:  new Date('2023-01-10T09:00:00Z')
+     });
 
-     */
-
-     // let newBooking = new Booking({
-     //      roomType: "Standard",
-     //      startDate: 2023-5-20,
-     //      endDate: 2023-5-27,
-     // })
-
-     // await newBooking.save().then(() => {
-     //      console.log(`${newBooking.name}`)
-     // });
-
-
+          console.log(`${newBooking.roomType} room booking is in the DB`);
 
 }).then(async () => {
      await mongoose.connection.close();
      console.log("Database disconnected!");
+
 })
