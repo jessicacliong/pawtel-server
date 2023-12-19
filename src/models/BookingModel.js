@@ -18,6 +18,14 @@ const BookingSchema = new Schema({
           required: true,
           unique: false
      },
+     pet: {
+		type: mongoose.Types.ObjectId,
+		ref: 'Pet'
+	},
+     room: {
+		type: mongoose.Types.ObjectId,
+		ref: 'User'
+	},
 
 });
 

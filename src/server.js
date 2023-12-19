@@ -1,6 +1,5 @@
 const express = require('express');
 
-const PetRouter = require('./controllers/PetController');
 const bookingRouter = require('./routes/BookingsRoutes');
 
 // make an instance of the server that we can customise and run
@@ -11,15 +10,13 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
 
-{/* GET localhost:3000/ */} 
-// app.get(route path, callback_function)
+/* GET localhost:3030/ */ 
 app.get("/", (request, response) => {
 
      response.json('Welcome to Pawtel!');
 
 });
 
-app.use("/pets", PetRouter);
 app.use("/bookings", bookingRouter);
 
 

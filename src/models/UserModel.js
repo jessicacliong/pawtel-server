@@ -3,45 +3,38 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const UserSchema = new Schema({
-     firstname: {
+     firstName: {
           type: String,
           required: true,
           unique: false
      },
-     lastname: {
+     lastName: {
           type: String,
-          required: true,
-          unique: false
-     },
-     address: {
-          type: String,
-          required: true,
-          unique: true
-     },
-     city: {
-          type: String,
-          required: true,
-          unique: true
-     },
-     postcode: {
-          type: Number,
           required: true,
           unique: false
      },
      email: {
           type: String,
           required: true,
-          unique: true
+          unique: true,
+          trim: true,
+          lowercase: true, 
+          match: [/.+\@.+\..+/, 'Please fill a valid email address'], 
      },
      username: {
           type: String,
           required: true,
-          unique: true
+          unique: true,
+          minLength: [8, 'Password should be at least 8 characters long'],
      },
      password: {
           type: String,
           required: true,
-          unique: false
+          unique: false,
+     },
+     pet: {
+          type: mongoose.Types.ObjectId,
+		ref: 'User'
      }
  });
 
@@ -62,11 +55,7 @@ module.exports = {
 /* User Model
 
 const User
-     name: String,
-     address: String,
-     city: String,
-     postcode: Number,
      email: String,
      username: String,
-     password: String,
+     password: String
 */

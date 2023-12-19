@@ -47,7 +47,12 @@ const PetSchema = new Schema({
           type: [String],
           required: false,
           unique: false
-     }
+     },
+     user: {
+		type: mongoose.Types.ObjectId,
+		ref: 'User'
+	},
+     
 });
 
 PetSchema.pre(
