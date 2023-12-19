@@ -13,30 +13,25 @@ databaseConnect().then(async () => {
      /* User Model
 
      const User = mongoose.model(`User`, {
-     name: String,
-     address: String,
-     city: String,
-     postcode: Number,
-     email: String,
+     firstname: "John",
+     lastname: "Smith",
      username: String,
-     password: String,
+     password: String
+
      */
 
-     let newUser = new User({
-          firstname: "John",
-          lastname: "Smith",
-          address: "123 Main St",
-          city: "Australia",
-          postcode: "3000",
-          email: "johnsmith@example.com",
-          username: "john",
-          password: "john123"
-     })
+     // let newUser = new User({
+     //      firstname: "John",
+     //      lastname: "Smith",
+     //      email: "johnsmith@example.com",
+     //      username: "john",
+     //      password: "john123"
+     // })
 
-     await newUser.save().then(() => {
-          console.log(`${newUser.firstname} ${newUser.lastname} is in the DB`);
+     // await newUser.save().then(() => {
+     //      console.log(`${newUser.firstname} ${newUser.lastname} is in the DB`);
 
-     });
+     // });
 
      /*   Pet Model
      
@@ -52,22 +47,22 @@ databaseConnect().then(async () => {
           allergies: [String],
      }); */
 
-     // let newPet = new Pet({
-     //      name: "Puma",
-     //      animalType: "dog",
-     //      breed: "Chow-chow",
-     //      colour: "brown",
-     //      gender: "male",
-     //      age: 2,
-     //      favouriteToys: ["ball","squeaky toy","favourite blanket"],
-     //      dietaryRequirements: ["none"],
-     //      allergies: ["none"],
-     // })   
+     let newPet = new Pet({
+          name: "Puma",
+          animalType: "dog",
+          breed: "Chow-chow",
+          colour: "brown",
+          gender: "male",
+          age: 2,
+          favouriteToys: ["ball","squeaky toy","favourite blanket"],
+          dietaryRequirements: ["none"],
+          allergies: ["none"],
+     })   
 
-     // await newPet.save().then(() => {
-     //      console.log(`${newPet.name} is in the DB`);
+     await newPet.save().then(() => {
+          console.log(`${newPet.name} is in the DB`);
 
-     // });
+     });
 
 
      /* Booking Model

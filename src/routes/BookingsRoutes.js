@@ -10,6 +10,9 @@ const {
 	removeBooking,
 } = require('../controllers/BookingController');
 
+//Authenticate user for all routes
+
+
 // Read all bookings
 router.get("/", getBookings);
 
