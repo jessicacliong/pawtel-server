@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 
 const Schema = mongoose.Schema;
 
@@ -32,30 +33,35 @@ const UserSchema = new Schema({
           required: true,
           unique: false,
      },
-     pet: {
+     pets: {
           type: mongoose.Types.ObjectId,
 		ref: 'User'
      }
  });
 
+ //User Prehook to save user information and inclue crypting password middleware
 UserSchema.pre(
      'save',
      async function (next) {
-          console.log("About to save a user to PawtelDB!");
+          const user = this;
+          // If password wasn't changed to plaintext, skip to next function.
+ 	     if (!user.isModified('password')) return next();
+ 	     // If password was changed, assume it was changed to plaintext and hash it.
+ 	     const hash = await bcrypt.hash(this.password, 10);
+ 	     this.password = hash;
           next();
+     });
+
+// Exclude password from JSON responses
+UserSchema.set('toJSON', {
+     transform: (doc, ret) => {
+         delete ret.password;
+         return ret;
      }
-)
+ });
 
 const User = mongoose.model('User', UserSchema);
 
 module.exports = {
      User
 }
-
-/* User Model
-
-const User
-     email: String,
-     username: String,
-     password: String
-*/
