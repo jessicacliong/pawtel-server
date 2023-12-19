@@ -25,13 +25,13 @@ const UserSchema = new Schema({
      username: {
           type: String,
           required: true,
-          unique: true,
-          minLength: [8, 'Password should be at least 8 characters long'],
+          unique: true
      },
      password: {
           type: String,
           required: true,
           unique: false,
+          minLength: [8, 'Password should be at least 8 characters long'],
      },
      pets: {
           type: mongoose.Types.ObjectId,
