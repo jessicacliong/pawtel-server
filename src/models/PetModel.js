@@ -58,7 +58,7 @@ const PetSchema = new Schema({
 PetSchema.pre(
      'save',
      async function (next) {
-          console.log("About to save a pet to PawtelDB");
+          console.log("About to save pet model to PawtelDB");
           next();
      }
 )
