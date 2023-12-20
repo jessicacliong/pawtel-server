@@ -1,8 +1,6 @@
 const mongoose = require('mongoose');
 
-const Schema = mongoose.Schema;
-
-const BookingSchema = new Schema({
+const BookingSchema = new mongoose.Schema({
      startDate: {
           type: Date,
           required: true,
@@ -16,10 +14,6 @@ const BookingSchema = new Schema({
      pet: {
 		type: mongoose.Types.ObjectId,
 		ref: 'Pet'
-	},
-     roomType: {
-		type: mongoose.Types.ObjectId,
-		ref: 'Room'
 	}
 });
 
