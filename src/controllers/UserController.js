@@ -35,12 +35,9 @@ async (request, response) => {
      }
 }
 
-const getUser = (request, response) => {};
-
-
-
-
 module.exports = {
+     getUser,
+     getUsers,
      registerUser,
      loginUser,
 }
