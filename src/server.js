@@ -8,7 +8,7 @@ const app = express();
 
 const cors = require('cors');
 const corsOptions = {
-     origin: ["http://localhost:3030/", "http://localhost:3030" "https://pawtel.netlify.app/"],
+     origin: ["http://localhost:3030/", "http://localhost:3030", "https://pawtel.netlify.app/"],
      optionsSuccessStatus: 200
 }
 app.use(cors(corsOptions));
