@@ -1,9 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
-const Schema = mongoose.Schema;
-
-const UserSchema = new Schema({
+const UserSchema = new mongoose.Schema({
      firstName: {
           type: String,
           required: true,
@@ -39,7 +37,7 @@ const UserSchema = new Schema({
      }
  });
 
- //User Prehook to save user information and inclue crypting password middleware
+ // User Prehook to save user information and inclue crypting password middleware
 UserSchema.pre(
      'save',
      async function (next) {
