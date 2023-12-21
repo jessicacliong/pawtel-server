@@ -25,7 +25,7 @@ app.get("/", (request, response) => {
 
 });
 
-// Application utilises the following routes:
+// Pawtel utilises the following routes:
 app.use("/bookings", bookingRouter);
 app.use("/users", userRouter);
 
