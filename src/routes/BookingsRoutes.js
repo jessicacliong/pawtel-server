@@ -10,14 +10,12 @@ const {
 	removeBooking,
 } = require('../controllers/BookingController');
 
-//Authenticate user for routes
+//Authenticate user for all routes
 
 // Read all bookings
 router.get("/", getBookings);
 
 // Read booking with :id
-
-// Authenticate user
 
 // Make a booking
 

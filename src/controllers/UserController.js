@@ -1,22 +1,22 @@
+const { User } = require('../models/UserModel');
+
+
+const getUsers = async (request, response) => {
+	let result = await User.find({});
+
+ 	response.json({result});
+}
+
 const getUser = (request, response) => {};
 
-const getUsers = (request, response) => {};
 
+// Sign-up a new user
 const registerUser = 
 async (request, response) => {
-     const userDetails = {
-          first_name: request.body.first_name,
-          last_name: request.body.last_name,
-          email: request.body.email,
-          username: request.body.username,
-          password: request.body.password,
-     };
-     let newUserDet= await createUser(userDetails);
+     let newUser = await User.create(request.body).catch(error => error);
+     response.json(newUser);
+};
 
-     response.json({
-          user: newUserDet,
-     });
-}
 
 const loginUser = 
 async (request, response) => {
@@ -25,7 +25,7 @@ async (request, response) => {
        if (await validateHashedData(request.body.password, thatUser.password)) {
          let encryptedUserJwt = await generateUserJWT({
            userID: thatUser._id,
-           email: thatUser.email,
+           username: thatUser.username,
            password: thatUser.password,
          });
          response.json({jwt: encryptedUserJwt});
@@ -35,9 +35,16 @@ async (request, response) => {
      }
 }
 
+const verifyUser = (request, response) => {};
+
+const regenerateUserJWT = (request, response) => {};
+
+
 module.exports = {
      getUser,
      getUsers,
      registerUser,
      loginUser,
+     verifyUser,
+     regenerateUserJWT
 }

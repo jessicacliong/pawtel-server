@@ -9,22 +9,17 @@ require('dotenv').config();
 dotenv.config();
 
 
-let newUser = await User.create({
-     firstName: "John",
-     lastName: "Smith",
-     email: "johnsmith@example.com",
-     username: "johnsmith",
-     password: "john12345",
-});
-
-
 databaseConnect().then(async () => {
 
      console.log("Creating seed data!");
 
-
-
-
+     let newUser = await User.create({
+          firstName: "John",
+          lastName: "Smith",
+          email: "johnsmith@example.com",
+          username: "johnsmith",
+          password: "john12345",
+     });
 
      // let newPet = await Pet.create({
      //      name: "Puma",
@@ -51,7 +46,7 @@ databaseConnect().then(async () => {
      //      roomType: "Standard"
      // });
 
-          console.log(`New Data created.\n + JSON.stringify({users: userCreated},)`);
+          console.log(`New Data created.\n + JSON.stringify({users: userCreated})`);
 
 }).then(async () => {
      await mongoose.connection.close();
