@@ -3,7 +3,6 @@ const { User } = require('../models/UserModel');
 
 const getUsers = async (request, response) => {
 	let result = await User.find({});
-
  	response.json({result});
 }
 
