@@ -60,9 +60,9 @@ async function validateHashedData(providedUnhashedData, storedHashedData){
 
 const jwt = require('jsonwebtoken');
 
-// Generates a JSON Web Token (JWT) with the provided payload
+// Generates JSON Web Token (JWT) with provided payload
 function generateJWT(payloadObj){
-     return jwt.sign(payloadObj, process.env.JWT_SECRET, { expiresIn: "7d"});
+     return jwt.sign(payloadObj, process.env.JWT_SECRET, { expiresIn: "1d"});
  }
 
 // Generates a JWT with an encrypted payload containing user details.
@@ -180,8 +180,12 @@ async function getAllUsers() {
      return await User.find({});
    }
 
-// Creates a new user based on userDetails data and saves it to the database.
+// Returns a user matching the userID of interest
+async function getSpecificUser(userID){
+    return await User.findById(userID);
+  }
 
+// Creates a new user based on userDetails data and saves it to the database.
 async function createUser(userDetails) {
      // Create new user based on userDetails data
      let newUser = new User({
@@ -195,6 +199,8 @@ async function createUser(userDetails) {
      return await newUser.save();
    }
 
+
+// Update an existing user and returns updated user data
 async function updateUser(userDetails) {
      // Hash the password if it's provided in the userDetails
      if (userDetails.updatedData.password) {
@@ -209,18 +215,17 @@ async function updateUser(userDetails) {
      ).exec();
    }
 
-//Deletes an existing user by Id.
+//Deletes an existing user by Id
 async function deleteUser(userId) {
      return await User.findByIdAndDelete(userId).exec();
-   }
+}
 
-
-//  Deletes an existing user by email.
+// Deletes an existing user by email.
 async function deleteUserByEmail() {
   // Check if a user with the specified email exists
-  const userToDelete = await User.findOne({email});
+  const userEmailDelete = await User.findOne({email});
 
-  if (userToDelete) {
+  if (userEmailDelete) {
     // If the user exists, delete them
     await User.deleteOne({email});
     console.log(`User with email ${email} deleted.`);
@@ -246,6 +251,7 @@ module.exports = {
      getUserIdFromJwt,
      verifyUserJWT,
      getAllUsers,
+     getSpecificUser,
      createUser,
      updateUser,
      deleteUser,
