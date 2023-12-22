@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 const { databaseConnect } = require('./database');
+
+//const { databaseConnector } = require('./database');
 const { Pet } = require('./models/PetModel');
 const { User } = require('./models/UserModel');
 const { Booking } = require('./models/BookingModel');
@@ -8,23 +10,33 @@ const { Room } = require('./models/RoomModel');
 require('dotenv').config();
 dotenv.config();
 
+const Room = [
+     {
+          roomType: "Standard"
+     },
+     {
+          roomType: "Deluxe"
+     }
 
-let newUser = await User.create({
-     firstName: "John",
-     lastName: "Smith",
-     email: "johnsmith@example.com",
-     username: "johnsmith",
-     password: "john12345",
-});
+]
 
-
+const Pet = [{
+     },
+     {
+          
+     }
+]
 databaseConnect().then(async () => {
 
      console.log("Creating seed data!");
 
-
-
-
+     // let newUser = await User.create({
+     //      firstName: "John",
+     //      lastName: "Smith",
+     //      email: "johnsmith@example.com",
+     //      username: "johnsmith",
+     //      password: "john12345",
+     // });
 
      // let newPet = await Pet.create({
      //      name: "Puma",
@@ -51,7 +63,7 @@ databaseConnect().then(async () => {
      //      roomType: "Standard"
      // });
 
-          console.log(`New Data created.\n + JSON.stringify({users: userCreated},)`);
+          console.log(`New Data created.\n + JSON.stringify({users: userCreated})`);
 
 }).then(async () => {
      await mongoose.connection.close();

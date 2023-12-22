@@ -1,8 +1,17 @@
 const mongoose = require('mongoose');
 
-/** 
- * Connect to a database
- */
+// async function databaseConnector(databaseURL) {
+//      await mongoose.connect(databaseURL);
+//  }
+ 
+//  async function databaseDisconnector() {
+//      await mongoose.connection.close();
+//  } 
+
+
+// /** 
+//  * Connect to a database
+//  */
 
 async function databaseConnect(){
      try {
@@ -15,5 +24,8 @@ async function databaseConnect(){
 }
 
 module.exports = {
-     databaseConnect
+    databaseConnect,
+    // databaseConnector,
+    // databaseDisconnector,
+    // getDatabaseURL
 }
