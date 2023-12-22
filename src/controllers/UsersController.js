@@ -11,16 +11,24 @@ const {
      encryptString,decryptString,decryptObject,
      validateHashedData,generateJWT,generateUserJWT,
      verifyUserJWT,getUserIdFromJwt,
-     getAUser,
      getAllUsers,
+     getSpecificUser,
      createUser, 
      updateUser, 
      deleteUser
 } = require('../functions/UserFunctions');
 
+const {
+     verifyJwtHeader,
+     errorhandler,
+     uniqueEmailCheck
+} = require('../middleware/checkMiddleware');
+
+
 // Get all existing users
 // /users/
 router.get("/",
+     verifyJwtHeader,
      async (request, response) => {
           let result = await User.find({});
           response.json({result});
@@ -35,8 +43,9 @@ router.get("/:id",
 // Register a new user
 // /users/register
 router.post('/register', 
-// uniqueEmailCheck, 
-// errorhandler,
+verifyJwtHeader,
+uniqueEmailCheck, 
+errorhandler,
      async (request, response) => {
           let newUser = await User.create(request.body).catch(error => error);
           response.json(newUser);
@@ -69,6 +78,17 @@ async (request, response, next) => {
      }
    });
 
+
+// Refreshing user's JWT token
+router.post('/token-refresh', async (request, response, next) => {
+  try {
+    let oldToken = request.body.jwt;
+    let refreshResult = await verifyUserJWT(oldToken);
+    response.json({jwt: refreshResult});
+  } catch (error) {
+    next(error);
+  }
+});
 
 
 
