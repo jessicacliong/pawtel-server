@@ -41,7 +41,31 @@ const mongoose = require('mongoose');
 // const databaseURL = getDatabaseURL(process.env.DB_URI);
 // // need to change DB_URI to NODE_ENV later
 
-// // Return useful details from the database connection
+// function getDatabaseURL(environment) {
+//      switch (environment.toLowerCase()) {
+//        case 'development':
+//          return process.env.DEV_DB_URL;
+//        case 'production':
+//          return process.env.PROD_DB_URL;
+//        default:
+//          console.error(
+//            'Incorrect specified JS environment, database will not connect'
+//          );
+//          return process.env.DEFAULT_DB_URL || '';
+//      }
+// }
+
+// databaseConnector(databaseURL).then(() => {
+//     console.log(`Database connected successfully! \n Port: ${PORT}`);
+//   })
+//   .catch((error) => {
+//     console.log(`
+//     ERROR occurred connecting to the database! It was:\n
+//     ${JSON.stringify(error)}
+//     `);
+//   });
+
+// Return a bunch of useful details from the database connection
 // app.get("/databaseHealth", (request, response) => {
 //      let databaseState = mongoose.connection.readyState;
 //      let databaseName = mongoose.connection.name;
@@ -55,7 +79,8 @@ const mongoose = require('mongoose');
 //          dbHost: databaseHost
 //      })
 //  });
- 
+
+
 //  app.get("/databaseDump", async (request, response) => {
 //      // Set up an object to store our data.
 //      const dumpContainer = {};
@@ -82,6 +107,14 @@ const mongoose = require('mongoose');
 
 
 
+
+// Pawtel utilises the following routes:
+const bookingRouter = require('./controllers/BookingsController');
+app.use("/bookings", bookingRouter);
+
+const userRouter = require('./controllers/UsersController');
+app.use("/users", userRouter);
+
 // Welcome Route
 app.get("/", (request, response) => {
      response.status(418).json({
@@ -89,14 +122,6 @@ app.get("/", (request, response) => {
           attemptedPath: request.path
      });
 });
-
-// Pawtel utilises the following routes:
-const bookingRouter = require('./routes/BookingsRoutes');
-app.use("/bookings", bookingRouter);
-
-const userRouter = require('./routes/UserRoutes');
-app.use("/users", userRouter);
-
 
 // A 404 route should only trigger if no preceding routes or middleware was run. 
 app.get('*', (request, response) => {
@@ -108,6 +133,7 @@ app.get('*', (request, response) => {
  
  // Export everything needed to run the server.
  module.exports = {
+     HOST,
      PORT,
-     app, 
+     app
 }
