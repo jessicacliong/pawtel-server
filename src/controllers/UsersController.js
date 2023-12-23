@@ -56,7 +56,7 @@ router.post('/register',
 // Post users/login
 router.post('/login',
 async (request, response, next) => {
-     try {
+    try {
        let targetUser = await User.findOne({username: request.body.username}).exec();
        console.log(targetUser)
        console.log(request.body.username)
@@ -77,7 +77,7 @@ async (request, response, next) => {
      } catch (error) {
        next(error);
      }
-   });
+  });
 
 
 // Refreshing a user's JWT token
@@ -113,13 +113,13 @@ router.put('/:userId', errorHandler, async (request, response, next) => {
 
     const userDetails = {
       userId: request.params.userId,
-      updatedData: {
+      updatedData: filterUndefinedProperty({
         firstName,
         lastName,
         email,
         username,
         password,
-      },
+      }),
     };
 
     const updatedUser = await updateUser(userDetails);
@@ -152,13 +152,13 @@ router.delete('/:userId', verifyJwtHeader, async (request, response, next) => {
     const deletedUser = await deleteUser(targetUserId);
 
     if (!deletedUser) {
-      return response.status(404).json({message: 'User not found'});
+      return response.status(404).json({message: 'No User found with this Id'});
     }
 
-    return response.json({message: 'User deleted successfully'});
+    return response.json({message: 'User successfully deleted '});
   } catch (error) {
     if (error.path === '_id') {
-      return response.status(404).json({message: 'User not found'});
+      return response.status(404).json({message: 'No User found with this Id'});
     }
     next(error);
   }
