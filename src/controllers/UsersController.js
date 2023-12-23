@@ -28,7 +28,7 @@ const {
 // Get all existing users
 // /users/
 router.get("/",
-     verifyJwtHeader,
+    //  verifyJwtHeader,
      async (request, response) => {
           let result = await User.find({});
           response.json({result});
@@ -43,9 +43,9 @@ router.get("/:id",
 // Register a new user
 // /users/register
 router.post('/register', 
-verifyJwtHeader,
-uniqueEmailCheck, 
-errorhandler,
+// verifyJwtHeader,
+// uniqueEmailCheck, 
+// errorhandler,
      async (request, response) => {
           let newUser = await User.create(request.body).catch(error => error);
           response.json(newUser);
