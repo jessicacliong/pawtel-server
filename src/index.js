@@ -2,11 +2,9 @@
 const dotenv = require('dotenv')
 dotenv.config();
 
-const { databaseConnect } = require('./database');
-const { app, PORT, HOST } = require('./server');
+const { app, PORT} = require('./server');
 
-app.listen(PORT, HOST, async () => {
-     await databaseConnect();
+app.listen(PORT, async () => {
      console.log('Pawtel server is running!');
 
 });
