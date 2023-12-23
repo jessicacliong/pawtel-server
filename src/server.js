@@ -35,77 +35,59 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
 const mongoose = require('mongoose');
-// const {databaseConnector, getDatabaseURL} = require('./database');
+const {databaseConnector, getDatabaseURL} = require('./database');
 
-// // set connection URL
-// const databaseURL = getDatabaseURL(process.env.DB_URI);
-// // need to change DB_URI to NODE_ENV later
+// set connection URL
+const databaseURL = getDatabaseURL(process.env.NODE_ENV);
 
-// function getDatabaseURL(environment) {
-//      switch (environment.toLowerCase()) {
-//        case 'development':
-//          return process.env.DEV_DB_URL;
-//        case 'production':
-//          return process.env.PROD_DB_URL;
-//        default:
-//          console.error(
-//            'Incorrect specified JS environment, database will not connect'
-//          );
-//          return process.env.DEFAULT_DB_URL || '';
-//      }
-// }
+databaseConnector(databaseURL).then(() => {
+    console.log(`Database connected successfully! \n Port: ${PORT}`);
+  })
+  .catch((error) => {
+    console.log(`
+    ERROR occurred connecting to the database! It was:\n
+    ${JSON.stringify(error)}
+    `);
+  });
 
-// databaseConnector(databaseURL).then(() => {
-//     console.log(`Database connected successfully! \n Port: ${PORT}`);
-//   })
-//   .catch((error) => {
-//     console.log(`
-//     ERROR occurred connecting to the database! It was:\n
-//     ${JSON.stringify(error)}
-//     `);
-//   });
-
-// Return a bunch of useful details from the database connection
-// app.get("/databaseHealth", (request, response) => {
-//      let databaseState = mongoose.connection.readyState;
-//      let databaseName = mongoose.connection.name;
-//      let databaseModels = mongoose.connection.modelNames();
-//      let databaseHost = mongoose.connection.host;
+// Return useful details from the database connection
+app.get("/databaseHealth", (request, response) => {
+     let databaseState = mongoose.connection.readyState;
+     let databaseName = mongoose.connection.name;
+     let databaseModels = mongoose.connection.modelNames();
+     let databaseHost = mongoose.connection.host;
  
-//      response.json({
-//          readyState: databaseState,
-//          dbName: databaseName,
-//          dbModels: databaseModels,
-//          dbHost: databaseHost
-//      })
-//  });
+     response.json({
+         readyState: databaseState,
+         dbName: databaseName,
+         dbModels: databaseModels,
+         dbHost: databaseHost
+     })
+ });
 
 
-//  app.get("/databaseDump", async (request, response) => {
-//      // Set up an object to store our data.
-//      const dumpContainer = {};
+ app.get("/databaseDump", async (request, response) => {
+     // Set up an object to store our data.
+     const dumpContainer = {};
  
-//      // Get the names of all collections in the DB.
-//      var collections = await mongoose.connection.db.listCollections().toArray();
-//      collections = collections.map((collection) => collection.name);
+     // Get the names of all collections in the DB.
+     var collections = await mongoose.connection.db.listCollections().toArray();
+     collections = collections.map((collection) => collection.name);
  
-//      // For each collection, get all their data and add it to the dumpContainer.
-//      for (const collectionName of collections) {
-//          let collectionData = await mongoose.connection.db.collection(collectionName).find({}).toArray();
-//          dumpContainer[collectionName] = collectionData;
-//      }
+     // For each collection, get all their data and add it to the dumpContainer.
+     for (const collectionName of collections) {
+         let collectionData = await mongoose.connection.db.collection(collectionName).find({}).toArray();
+         dumpContainer[collectionName] = collectionData;
+     }
  
-//      // Confirm in the terminal that the server is returning the right data.
-//      // With pretty formatting too, via JSON.stringify(value, null, spacing for indentation).
-//      console.log("Dumping all of this data to the client: \n" + JSON.stringify(dumpContainer, null, 4));
+     // Confirm in the terminal that the server is returning the right data.
+     console.log("Dumping all of this data to the client: \n" + JSON.stringify(dumpContainer, null, 4));
  
-//      // Return the big data object.
-//      response.json({
-//          data: dumpContainer
-//      });
-//  });
-
-
+     // Return the big data object.
+     response.json({
+         data: dumpContainer
+     });
+ });
 
 
 // Pawtel utilises the following routes:
