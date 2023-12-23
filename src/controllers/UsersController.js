@@ -11,6 +11,7 @@ const {
      encryptString,decryptString,decryptObject,
      validateHashedData,generateJWT,generateUserJWT,
      verifyUserJWT,getUserIdFromJwt,
+     filterUndefinedProperty,
      getAllUsers,
      getSpecificUser,
      createUser, 
@@ -20,7 +21,7 @@ const {
 
 const {
      verifyJwtHeader,
-     errorhandler,
+     errorHandler,
      uniqueEmailCheck
 } = require('../middleware/checkMiddleware');
 
@@ -65,7 +66,7 @@ async (request, response, next) => {
    
        if (await validateHashedData(request.body.password, targetUser.password)) {
          let encryptedUserJwt = await generateUserJWT({
-           userId: targetUser._id,
+           userId: targetUser.userId,
            username: targetUser.username,
            password: targetUser.password,
          });
@@ -79,7 +80,7 @@ async (request, response, next) => {
    });
 
 
-// Refreshing user's JWT token
+// Refreshing a user's JWT token
 router.post('/token-refresh', async (request, response, next) => {
   try {
     let oldToken = request.body.jwt;
@@ -90,7 +91,78 @@ router.post('/token-refresh', async (request, response, next) => {
   }
 });
 
+// Update an existing user
+router.put('/:userId', errorHandler, async (request, response, next) => {
+  try {
+    const requestUserId = await getUserIdFromJwt(request.headers.jwt);
 
+    // Ensure that the user can only update their own account
+    if (requestUserId !== request.params.userId) {
+      return response
+        .status(403)
+        .json({message: 'Unauthorised: You can only update your own account!'});
+    }
+
+    const {
+      firstName,
+      lastName,
+      email,
+      username,
+      password,
+    } = request.body;
+
+    const userDetails = {
+      userId: request.params.userId,
+      updatedData: {
+        firstName,
+        lastName,
+        email,
+        username,
+        password,
+      },
+    };
+
+    const updatedUser = await updateUser(userDetails);
+
+    if (!updatedUser) {
+      return response.status(404).json({message: 'User not found'});
+    }
+
+    return response.json(updatedUser)
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Delete user account
+// Will action if the request has the same userId
+router.delete('/:userId', verifyJwtHeader, async (request, response, next) => {
+  try {
+    const requestUserId = await getUserIdFromJwt(request.headers.jwt);
+    const targetUserId = request.params.userId;
+
+    // Check if the user making the request is the same as the user whose data is being deleted
+    if (requestUserId !== targetUserId) {
+      return response.status(403).json({
+        message: 'Unauthorised. You can only delete your own account.',
+      });
+    }
+
+    // Proceed with the delete operation
+    const deletedUser = await deleteUser(targetUserId);
+
+    if (!deletedUser) {
+      return response.status(404).json({message: 'User not found'});
+    }
+
+    return response.json({message: 'User deleted successfully'});
+  } catch (error) {
+    if (error.path === '_id') {
+      return response.status(404).json({message: 'User not found'});
+    }
+    next(error);
+  }
+});
 
 
 module.exports = router;

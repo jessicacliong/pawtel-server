@@ -6,7 +6,6 @@ const express = require('express');
 const app = express();
 
 // If no process.env.X is found, assign a default value instead.
-const HOST = process.env.HOST || 'localhost';
 const PORT = process.env.PORT || 3030;
 
 
@@ -115,7 +114,6 @@ app.get('*', (request, response) => {
  
  // Export everything needed to run the server.
  module.exports = {
-     HOST,
      PORT,
      app
 }

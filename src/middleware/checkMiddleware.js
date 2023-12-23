@@ -20,7 +20,7 @@ const verifyJwtHeader = async (request, response, next) => {
    };
 
 // Middleware to handle uncaught errors
-const errorhandler = (error, request, response, next) => {
+const errorHandler = (error, request, response, next) => {
      console.error('Unhandled error:', error);
    
      // Handle and respond to the client appropriately
@@ -53,6 +53,6 @@ const uniqueEmailCheck = async (request, response, next) => {
 
 module.exports = {
      verifyJwtHeader,
-     errorhandler,
+     errorHandler,
      uniqueEmailCheck,
 };
