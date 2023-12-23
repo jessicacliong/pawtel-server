@@ -56,9 +56,9 @@ router.post('/register',
 router.post('/login',
 async (request, response, next) => {
      try {
-       let targetUser = await User.findOne({email: request.body.email}).exec();
+       let targetUser = await User.findOne({username: request.body.username}).exec();
        console.log(targetUser)
-       console.log(request.body.email)
+       console.log(request.body.username)
        if (!targetUser) {
          return response.status(404).json({message: 'User not found.'});
        }
@@ -66,7 +66,7 @@ async (request, response, next) => {
        if (await validateHashedData(request.body.password, targetUser.password)) {
          let encryptedUserJwt = await generateUserJWT({
            userId: targetUser._id,
-           email: targetUser.email,
+           username: targetUser.username,
            password: targetUser.password,
          });
          response.json({jwt: encryptedUserJwt});

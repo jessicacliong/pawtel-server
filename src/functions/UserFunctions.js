@@ -62,7 +62,7 @@ const jwt = require('jsonwebtoken');
 
 // Generates JSON Web Token (JWT) with provided payload
 function generateJWT(payloadObj){
-     return jwt.sign(payloadObj, process.env.JWT_SECRET, { expiresIn: "1d"});
+     return jwt.sign(payloadObj, process.env.JWT_KEY, { expiresIn: "1d"});
  }
 
 // Generates a JWT with an encrypted payload containing user details.
@@ -107,7 +107,7 @@ async function verifyUserJWT(userJWT) {
        if (
          targetUser &&
          (targetUser.password, userData.password) &&
-         targetUser.email == userData.email
+         targetUser.username == userData.username
        ) {
          // ...User details are valid, make a fresh JWT to extend their token's valid time
          return generateJWT({ data: userJwtVerified.payload.data });
@@ -157,7 +157,7 @@ async function getUserIdFromJwt(userJWT) {
        if (
          targetUser &&
          targetUser.password == userData.password &&
-         targetUser.email == userData.email
+         targetUser.username == userData.username
        ) {
          // Return the user Id
          return userData.userId;
