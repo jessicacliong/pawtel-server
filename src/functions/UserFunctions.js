@@ -139,37 +139,38 @@ async function verifyUserJWT(userJWT) {
 // Returns the user Id extracted from a user JWT.
 
 async function getUserIdFromJwt(userJWT) {
-     try {
-       let userJwtVerified = jwt.verify(userJWT, process.env.JWT_SECRET, {
-         complete: true,
-       });
-   
-       // Decrypt the encrypted payload.
-       let decryptedJwtPayload = decryptString(userJwtVerified.payload.data);
-   
-       // Parse the decrypted data into an object.
-       let userData = JSON.parse(decryptedJwtPayload);
-   
-       // Find the user mentioned in the JWT.
-       let targetUser = await User.findById(userData.userId).exec();
-   
-       // If the JWT data matches the stored data...
-       if (
-         targetUser &&
-         targetUser.password == userData.password &&
-         targetUser.username == userData.username
-       ) {
-         // Return the user Id
-         return userData.userId;
-       } else {
-         // Otherwise, user details are invalid.
-         throw new Error('Invalid user token.');
-       }
-     } catch (error) {
-       // Handle JWT verification errors
-       throw new Error('Invalid user token.');
-     }
+  try {
+    let userJwtVerified = jwt.verify(userJWT, process.env.JWT_SECRET, {
+      complete: true,
+    });
+
+    // Decrypt the encrypted payload.
+    let decryptedJwtPayload = decryptString(userJwtVerified.payload.data);
+
+    // Parse the decrypted data into an object.
+    let userData = JSON.parse(decryptedJwtPayload);
+
+    // Find the user mentioned in the JWT.
+    let targetUser = await User.findById(userData.userId).exec();
+
+    // If the JWT data matches the stored data...
+    if (
+      targetUser &&
+      targetUser.password == userData.password &&
+      targetUser.email == userData.email
+    ) {
+      // Return the user Id
+      return userData.userId;
+    } else {
+      // Otherwise, user details are invalid.
+      throw new Error('Invalid user token.');
+    }
+  } catch (error) {
+    // Handle JWT verification errors
+    throw new Error('Invalid user token.');
+  }
 }
+
    
 
 // --------------------------------------
@@ -181,8 +182,8 @@ async function getAllUsers() {
    }
 
 // Returns a user matching the userID of interest
-async function getSpecificUser(userID){
-    return await User.findById(userID);
+async function getSpecificUser(userId){
+    return await User.findById(userId);
   }
 
 // Creates a new user based on userDetails data and saves it to the database.
@@ -234,6 +235,11 @@ async function deleteUserByEmail() {
   }
 }
 
+function filterUndefinedProperty(obj) {
+  return Object.fromEntries(
+    Object.entries(obj).filter(([_, v]) => v !== undefined)
+  );
+}
 
 
 
@@ -256,4 +262,5 @@ module.exports = {
      updateUser,
      deleteUser,
      deleteUserByEmail,
+    filterUndefinedProperty,
    };
