@@ -16,7 +16,7 @@ const PetSchema = new mongoose.Schema({
           required: true,
           unique: false
      },
-	colour: {
+	color: {
           type: String,
           required: true,
           unique: false

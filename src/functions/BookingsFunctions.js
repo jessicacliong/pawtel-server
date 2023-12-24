@@ -1,11 +1,15 @@
 const { Booking } = require('../models/BookingModel');
 
+const dotenv = require('dotenv');
+dotenv.config();
+
+
 // Get All Bookings
 async function getAllBookings() {
-	return await Booking.find({}).exec()
+	return await Booking.find({});
 }
 
-// Get A booking by booking ID
+// Get A booking by bookingId
 async function getABooking(bookingId) {
      return await Booking.findOne({_id: bookingId});
    }
@@ -21,9 +25,9 @@ if (new Date(startDate) > new Date(endDate)) {
 
 // create a new booking
 let newBooking = new Booking({
-     start_time: bookingDetails.startDate,
-     end_time: bookingDetails.endDate,
-     pet: bookingDetials.pet_id
+     startDate: bookingDetails.startDate,
+     endDate: bookingDetails.endDate,
+     pet: bookingDetails.pet_id
 });
 
 return await newBooking.save();
