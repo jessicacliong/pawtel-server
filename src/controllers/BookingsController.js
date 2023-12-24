@@ -22,25 +22,14 @@ const { verifyJWTHeader } = require('../middleware/checkMiddleware');
 //Authenticate user for all routes
 
 // GET all bookings
+
+// GET all bookings
 router.get('/', 
-	async (request, response) => {    
-		try {
-			// Access the user Id from the JWT
-			const requestingUserId = await getUserIdFromJwt(request.headers.jwt);
+async (request, response) => {
+	let result = await Booking.find({});
+	response.json({result});
+});
 
-		     // Initialize an empty array for filtered bookings
-			let filteredBookings = [];
-
-			let result = await filteredBookings.find({});
-
-			response.json({
-				bookings: filteredBookings
-			});
-		} catch (error) {
-			next(error);
-		   }
-		 }
-);
 
 // GET booking with :id
 router.get('/:bookingId',
@@ -70,7 +59,6 @@ router.post('/',
 				.status(400)
 				.json({error: error.message, valueGiven: error.value});
 			}
-	    	next(error);
 	  });
 
 // Update a certain booking
@@ -116,26 +104,28 @@ router.put('/:booking_id',
 // Delete a booking
 router.delete("/:bookingId",
 	async (request, response, next) => {
-	const requestingUserId = await getUserIdFromJwt(request.headers.jwt);
+	// const requestingUserId = await getUserIdFromJwt(request.headers.jwt);
  
+	// try {
+	//   const booking = await getOneBooking(request.params.bookingId);
+ 
+	//   if (!booking) {
+	//     return response.status(404).json({message: 'Booking not found'});
+	//   }
+ 
+	//   if (validateUserPermission(booking, requestingUserId)) {
+	
 	try {
-	  const booking = await getOneBooking(request.params.bookingId);
- 
-	  if (!booking) {
-	    return response.status(404).json({message: 'Booking not found'});
-	  }
- 
-	  if (validateUserPermission(booking, requestingUserId)) {
 	    const deletedBooking = await deleteBooking(request.params.bookingId);
 	    response.json({
 		 message: 'Booking deleted successfully',
 		 booking: deletedBooking,
 	    });
-	  } else {
-	    response.status(403).json({
-		 message: 'Unauthorised. You do not have permission.',
-	    });
-	  }
+	//   } else {
+	//     response.status(403).json({
+	// 	 message: 'Unauthorised. You do not have permission.',
+	//     });
+	//   }
 	} catch (error) {
 	  next(error);
 	}
