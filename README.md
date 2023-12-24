@@ -39,9 +39,12 @@ npm install
 
 4. Start the development server.
 
+```
 npm run start-dev
+```
 
-Open your browser and visit http://localhost:3000 to view the Pawtel application.
+
+Open your browser and visit http://localhost:3030 to view the Pawtel application.
 
 
 
