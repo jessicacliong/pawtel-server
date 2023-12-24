@@ -10,7 +10,9 @@ const router = express.Router();
 const {
      getOnePet,
      getAllPets,
-     createNewPet
+     createNewPet,
+     updatePetDetails,
+     deletePetDetails
 } = require('../functions/PetFunctions')
 
 router.get("/",

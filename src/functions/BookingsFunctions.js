@@ -84,11 +84,13 @@ async function changeBooking(bookingDetails) {
 }
 
 // Deletes an existing booking
+
 async function deleteBooking(bookingId) {
      return await Booking.findByIdAndDelete(bookingId).exec();
 }
 
 // Validates a room is currently booked by a pet
+
 async function validateRoomBookedByPet(roomId, requestingPetId) {
      try {
        const petsRooms = await getAllRooms(requestingPetId);
