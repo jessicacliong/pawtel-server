@@ -59,14 +59,14 @@ Open your browser and visit http://localhost:3030 to view the Pawtel application
 |                     | DELETE /bookings/:id    | PUT /pets/:id             | PUT /rooms/:id    |
 
 
-## Server Libraries and Dependencies
+### Server Libraries and Dependencies
 
-`express ^4.18.2` - Express is a minimal and flexible Node.js web application framework that provides a robust set of features for web and mobile applications. The server for this application has been built with the Express framework to allow for secure, simple routing, middleware support and a modular application.
+- `express ^4.18.2` - Express is a minimal and flexible Node.js web application framework that provides a robust set of features for web and mobile applications. The server for this application has been built with the Express framework to allow for secure, simple routing, middleware support and a modular application.
 - `mongoose ^8.0.3` - Mongoose is an Object Data Modelling (ODM) library for MongoDB and Node.js. It allows the creation of strongly-typed schemas for MongoDB documents to provide data validation. Several models have been defined within the server containing Mongoose schemas to better structure and validate database documents.
 - `cors ^2.8.5` - CORS is a node.js package for middleware that enables cross origin resource sharing between the Express server and React client.
 - `dotenv ^8.2.0` - Dotenv is a zero-dependency module that loads environment variables from a .env file into process.env. Env variables have been used to safely store information such as database keys and to conditionally determine which version of the client to connect with.
 
-#### Server Development dependencies:
+### Server Development dependencies:
 
 - `nodemon ^2.0.4` - Nodemon is used to automatically restart the node server when changes have been detected. The `npm start` script has been modified to execute nodemon in development to use this feature.
 
@@ -79,7 +79,7 @@ Open your browser and visit http://localhost:3030 to view the Pawtel application
 - `axios ^0.19.2` - Axios is a Javascript library used to make HTTP requests to the server from the client. Axios configuration has been set in src/config/api.js to use environment variables via `process.env`. Bookings, auth and fairy services each use axios to make HTTP requests to their dedicated api end points on the server.
 
 
-#### Client Development dependencies
+### Client Development dependencies
 
 - `prettier ^2.0.5` - Used to declare a pre-defined code format to maintain consistency across different developer machines.
 - `FontAwesome ^6.5.1` - A package containing various fonts to use in the front-end.
