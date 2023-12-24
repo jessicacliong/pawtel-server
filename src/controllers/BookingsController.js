@@ -22,8 +22,6 @@ const { verifyJWTHeader } = require('../middleware/checkMiddleware');
 //Authenticate user for all routes
 
 // GET all bookings
-
-// GET all bookings
 router.get('/', 
 async (request, response) => {
 	let result = await Booking.find({});
@@ -64,22 +62,22 @@ router.post('/',
 // Update a certain booking
 router.put('/:booking_id',
 	async (request, response) => {
-	const requestingUserId = await getUserIdFromJwt(request.headers.jwt);
+	// const requestingUserId = await getUserIdFromJwt(request.headers.jwt);
 
+	// try {
+	// 	const booking = await getOneBooking(request.params.bookingId);
+
+	// 	if (!booking) {
+	// 		return response.status(404).json({message: 'Booking not found'});
+	// 	}
+
+	// 	if (!validateUserPermission(booking, requestingUserId)) {
+	// 		return response.status(403).json({
+	// 		error: 'Forbidden',
+	// 		message: 'You do not have permission to update this booking',
+	// 		});
+	// 	}
 	try {
-		const booking = await getOneBooking(request.params.bookingId);
-
-		if (!booking) {
-			return response.status(404).json({message: 'Booking not found'});
-		}
-
-		if (!validateUserPermission(booking, requestingUserId)) {
-			return response.status(403).json({
-			error: 'Forbidden',
-			message: 'You do not have permission to update this booking',
-			});
-		}
-
 		const {
 			start_time,
 			end_time,

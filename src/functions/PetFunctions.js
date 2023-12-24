@@ -30,12 +30,31 @@ async function createNewPet(petDetails) {
  
    // And save it to DB
    return await newPet.save();
- }
+}
 
+// Update pet details
+async function updatePetDetails(petDetails) {
+     try {
+     return await Pet.findByIdAndUpdate(
+          petDetails.petId,
+          updatedData,
+          { new: true }
+     ).exec();
+     } catch (error) {
+     throw new Error(`Error updating pet details: ${error.message}`);
+}
+};
+
+// Delete a pet
+async function deletePetDetails(petId) {
+     return await Pet.findByIdAndDelete(petId).exec();
+}
 
 
 module.exports = {
      getAllPets,
      getOnePet,
-     createNewPet
+     createNewPet,
+     updatePetDetails,
+     deletePetDetails
 }
