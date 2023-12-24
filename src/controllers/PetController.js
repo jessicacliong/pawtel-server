@@ -38,7 +38,7 @@ async (request, response, next) => {
       }
 );
 
-router.post("/",
+router.post("/", createNewPet,
 // verifyJwtHeader,
 // uniquePetCheck, 
 // errorhandler,
@@ -48,9 +48,13 @@ async (request, response) => {
 });
 
 router.put("/",
-async (request, response) => {});
+async (request, response) => {
+
+});
 
 router.delete("/",
-async (request, response) => {});
+async (request, response) => {
+
+});
 
 module.exports = router;
