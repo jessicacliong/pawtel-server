@@ -6,7 +6,7 @@ Client repo: https://github.com/Pawtel/pawtel-client
 
 Server Repo: https://github.com/Pawtel/pawtel-server
 
-Deployed Website : https://pawtel.netlify.app/book
+Deployed Website : https://pawtel.netlify.app/
 
 Deployed API : https://pawtel-48da552cecec.herokuapp.com/
 
