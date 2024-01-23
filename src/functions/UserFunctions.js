@@ -179,12 +179,7 @@ async function getUserIdFromJwt(userJWT) {
 // Returns an array of raw MongoDB database documents for all users.
 async function getAllUsers() {
      return await User.find({});
-   }
-
-// Returns a user matching the userID of interest
-async function getSpecificUser(userId){
-    return await User.findById(userId);
-  }
+}
 
 // Creates a new user based on userDetails data and saves it to the database.
 async function createUser(userDetails) {
@@ -193,12 +188,13 @@ async function createUser(userDetails) {
        firstName: userDetails.firstName,
        lastName: userDetails.lastName,
        email: userDetails.email,
+       username: userDetails.username,
        password: userDetails.password,
      });
    
      // And save it to DB
      return await newUser.save();
-   }
+}
 
 
 // Update an existing user and returns updated user data
@@ -214,7 +210,7 @@ async function updateUser(userDetails) {
        userDetails.updatedData,
        { returnDocument: 'after' }
      ).exec();
-   }
+}
 
 //Deletes an existing user by Id
 async function deleteUser(userId) {
@@ -222,7 +218,7 @@ async function deleteUser(userId) {
 }
 
 // Deletes an existing user by email.
-async function deleteUserByEmail() {
+async function deleteUserByEmail(email) {
   // Check if a user with the specified email exists
   const userEmailDelete = await User.findOne({email});
 
@@ -257,7 +253,6 @@ module.exports = {
      getUserIdFromJwt,
      verifyUserJWT,
      getAllUsers,
-     getSpecificUser,
      createUser,
      updateUser,
      deleteUser,

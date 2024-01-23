@@ -8,16 +8,21 @@ const { User } = require('../models/UserModel');
 const router = express.Router();
 
 const { 
-     encryptString,decryptString,decryptObject,
-     validateHashedData,generateJWT,generateUserJWT,
-     verifyUserJWT,getUserIdFromJwt,
-     filterUndefinedProperty,
-     getAllUsers,
-     getSpecificUser,
-     createUser, 
-     updateUser, 
-     deleteUser
+  encryptString,
+  decryptString,
+  decryptObject,
+  validateHashedData,
+  generateJWT,
+  generateUserJWT,
+  verifyUserJWT,
+  getUserIdFromJwt,
+  filterUndefinedProperty,
+  getAllUsers,
+  createUser, 
+  updateUser, 
+  deleteUser
 } = require('../functions/UserFunctions');
+
 
 const {
      verifyJwtHeader,
@@ -26,40 +31,40 @@ const {
 } = require('../middleware/checkMiddleware');
 
 
-// Get all existing users
-// /users/
-router.get("/",
-    //  verifyJwtHeader,
-     async (request, response) => {
-          let result = await User.find({});
-          response.json({result});
-});
-
-// Get user by id
-// /users/:id
-router.get("/:id", 
-     async (request, response) => {});
-
-
 // Register a new user
 // /users/register
 router.post('/register', 
-// verifyJwtHeader,
-// uniqueEmailCheck, 
-// errorhandler,
-     async (request, response) => {
-          let newUser = await User.create(request.body).catch(error => error);
-          response.json(newUser);
-     });
+uniqueEmailCheck, 
+errorHandler,
+async (request, response, next) => {
+  try {
+    const userDetails = {
+      firstName: request.body.firstName,
+      lastName: request.body.lastName,
+      email: request.body.email,
+      username: request.body.username,
+      password: request.body.password,
+    };
+  
+    let newUser = await createUser(userDetails);
+    
+    response.json({
+      newUser
+    });
+    } catch (error) {
+      next(error);
+    } 
+  }
+);
 
 // Login an existing user
 // Post users/login
-router.post('/login',
-async (request, response, next) => {
+router.post(
+  '/login',
+  async (request, response, next) => {
     try {
        let targetUser = await User.findOne({email: request.body.email}).exec();
        console.log(targetUser)
-       console.log(request.body.email)
        if (!targetUser) {
          return response.status(404).json({message: 'User not found.'});
        }
@@ -81,18 +86,55 @@ async (request, response, next) => {
 
 
 // Refreshing a user's JWT token
-router.post('/token-refresh', async (request, response, next) => {
-  try {
-    let oldToken = request.body.jwt;
-    let refreshResult = await verifyUserJWT(oldToken);
-    response.json({jwt: refreshResult});
-  } catch (error) {
-    next(error);
-  }
-});
+router.post(
+  '/token-refresh', 
+  async (request, response, next) => {
+    try {
+      let oldToken = request.body.jwt;
+      let refreshResult = await verifyUserJWT(oldToken);
+      response.json({jwt: refreshResult});
+    } catch (error) {
+      next(error);
+    }
+  });
+
+// Get all existing users
+// /users/
+router.get(
+  '/',
+    verifyJwtHeader,
+    async (request, response) => {
+      let allUsers = await getAllUsers();
+
+      response.json({
+        userCount: allUsers.length,
+        usersArray: allUsers
+    });
+  });
+
+// Get user by id
+// /users/:userId
+router.get(
+  '/:userId', 
+     async (request, response, next) => {
+      try {
+        const user = await User.findOne({_id: request.params.userId});
+
+        if (!user) {
+          return response.status(404).json({message: 'User not found'});
+        }
+        return response.json(user);
+      } catch (error) {
+        next(error);
+      }
+    }
+  );
 
 // Update an existing user
-router.put('/:userId', errorHandler, async (request, response, next) => {
+router.put('/:userId', 
+verifyJwtHeader,
+errorHandler,
+async (request, response, next) => {
   try {
     const requestUserId = await getUserIdFromJwt(request.headers.jwt);
 
@@ -136,32 +178,28 @@ router.put('/:userId', errorHandler, async (request, response, next) => {
 
 // Delete user account
 // Will action if the request has the same userId
-router.delete('/:userId', verifyJwtHeader, async (request, response, next) => {
-  try {
-    const requestUserId = await getUserIdFromJwt(request.headers.jwt);
-    const targetUserId = request.params.userId;
+router.delete(
+  '/:userId', 
+  verifyJwtHeader, 
+  async (request, response, next) => {
+    try {
+      const requestingUserId = await getUserIdFromJwt(request.headers.jwt);
+      const targetUserId = request.params.userId;
 
-    // Check if the user making the request is the same as the user whose data is being deleted
-    if (requestUserId !== targetUserId) {
-      return response.status(403).json({
-        message: 'Unauthorised. You can only delete your own account.',
-      });
+      // Check if the user making the request is the same as the user whose data is being deleted
+      if (requestingUserId !== targetUserId) {
+        return response.status(403).json({
+          message: 'Unauthorised. You can only delete your own account.',
+        });
+      }
+
+      // Proceed with the delete operation
+      const deletedUser = await deleteUser(targetUserId);
+
+      return response.json({message: 'User successfully deleted '});
+    } catch (error) {
+      next(error);
     }
-
-    // Proceed with the delete operation
-    const deletedUser = await deleteUser(targetUserId);
-
-    if (!deletedUser) {
-      return response.status(404).json({message: 'No User found with this Id'});
-    }
-
-    return response.json({message: 'User successfully deleted '});
-  } catch (error) {
-    if (error.path === '_id') {
-      return response.status(404).json({message: 'No User found with this Id'});
-    }
-    next(error);
-  }
 });
 
 
