@@ -1,95 +1,117 @@
+//import necessary modules and functions
 const mongoose = require('mongoose');
-const { databaseConnect } = require('./database');
+const { databaseConnector, getDatabaseURL } = require('./database');
 
-//const { databaseConnector } = require('./database');
+// import models
 const { Pet } = require('./models/PetModel');
 const { User } = require('./models/UserModel');
 const { Booking } = require('./models/BookingModel');
 const { Room } = require('./models/RoomModel');
 
-require('dotenv').config();
+// import model functions
+const { hashString } = require('./functions/UserFunctions');
+
+const dotenv = require('dotenv');
 dotenv.config();
 
-const User = [
-     {
-          
-     }
-]
+// Function to seed database
+async function seedDatabase() {
+    try {
+    // Connect to the database
+    const databaseURL = getDatabaseURL (process.env.NODE_ENV);
+    await databaseConnector(databaseURL);
+    console.log('Database connected successfully!');
 
-const Room = [
-     {
-          roomType: "Standard"
-     },
-     {
-          roomType: "Deluxe"
-     }
+    // Check if wipe is true and then drop collections
+    if (process.env.WIPE == 'true') {
+        // Get the names of all collections in the DB.
+        const collections = await mongoose.connection.db
+           .listCollections()
+           .toArray();
+ 
+        // Use Promise.all to wait for all dropCollection operations to complete and empty the data and collections from the DB so that they no longer exist.
+        await Promise.all(
+           collections.map(async (collection) => {
+            await mongoose.connection.db.dropCollection(collection.name);
+           })
+        );
+    }
+    const users = [
+        {
+            firstName: 'John',
+            lastName: 'Smith',
+            email: 'johnsmith@email.com',
+            username: 'johnsmith',
+            password: 'john12345',
+        },
+        {
+            firstName: 'Alice',
+            lastName: 'Brenner',
+            email: 'alicebrenner@email.com',
+            username: 'alicebrenner',
+            password: 'alice12345',
+        },
+        {
+            firstName: 'Bob',
+            lastName: 'Cooper',
+            email: 'bobcooper@email.com',
+            username: 'bobcooper',
+            password: 'bob12345',
+        }
+    ];
 
-]
+    // const Room = [
+    //      {
+    //           roomType: "Standard"
+    //      },
+    //      {
+    //           roomType: "Deluxe"
+    //      }
+    // ]
 
-const Pet = [{
-     },
-     {
-          
-     }
-]
+    // const Pet = [
+    //      {
+    //
+    //      }
+    // ]
 
-// Connect to the database.
-var databaseURL = "";
-switch (process.env.NODE_ENV.toLowerCase()) {
-    case "development":
-        databaseURL = "mongodb://localhost:27017/ExpressBuildAnAPI-dev";
-        break;
-    case "production":
-        databaseURL = process.env.DATABASE_URL;
-        break;
-    default:
-        console.error("Incorrect JS environment specified, database will not be connected.");
-        break;
+    // const Booking = [
+    //      {    
+    //          startDate: new Date('2023-01-01T09:00:00Z'),
+    //          endDate: new Date('2023-01-10T09:00:00Z'),
+    //          pet: newPet._id
+    //      }
+    // ]
+
+    // Hash passwords and create users
+    // Iterate through the users array
+    for (const user of users) {
+        
+        // Hash the password of the user
+        user.password = await hashString(user.password);
+    }
+    // Save the users to the database.
+    let usersCreated = await User.insertMany(users);
+ 
+    console.log(
+        'New DB data created\n' + 
+            JSON.stringify(
+                {
+                    users: usersCreated
+                }, 
+                null, 
+                4
+            )
+        );
+    } catch (error) {
+        console.error('Error seeding database:', error);
+    } finally {
+        // Disconnect from the database.
+        mongoose.connection.close();
+        console.log('DB seed connection closed.');
+    }
 }
 
-databaseConnector(databaseURL).then(() => {
-     console.log("Database connected successfully!");
- }).catch(error => {
-     console.log(`
-     Some error occurred connecting to the database! It was: 
-     ${error}
-     `);
- }).then(async () => {
-     if (process.env.WIPE == "true"){
-         // Get the names of all collections in the DB.
-         const collections = await mongoose.connection.db.listCollections().toArray();
- 
-         // Empty the data and collections from the DB so that they no longer exist.
-         collections.map((collection) => collection.name)
-         .forEach(async (collectionName) => {
-             mongoose.connection.db.dropCollection(collectionName);
-         });
-         console.log("Old DB data deleted.");
-     }
- }).then(async () => {
-     // Add new data into the database.
-     await Role.insertMany(roles);
- 
-     console.log("New DB data created.");
-
- }).then(() => {
-     // Disconnect from the database.
-     mongoose.connection.close();
-     console.log("DB seed connection closed.")
- });
-
-
-databaseConnect().then(async () => {
-
-     console.log("Creating seed data!");
-
-     // let newUser = await User.create({
-     //      firstName: "John",
-     //      lastName: "Smith",
-     //      email: "johnsmith@example.com",
-     //      username: "johnsmith",
-     //      password: "john12345",
-     // });
 
      // let newPet = await Pet.create({
      //      name: "Puma",
@@ -116,10 +138,5 @@ databaseConnect().then(async () => {
      //      roomType: "Standard"
      // });
 
-          console.log(`New Data created.\n + JSON.stringify({users: userCreated})`);
 
-}).then(async () => {
-     await mongoose.connection.close();
-     console.log("Database disconnected!");
-
-})
+seedDatabase();
