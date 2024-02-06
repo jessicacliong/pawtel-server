@@ -1,10 +1,10 @@
 const { Pet } = require("../models/PetModel");
 
-const dotenv = require('dotenv');
-dotenv.config();
 
+// --------------------------------------
+ // ----- MongoDB/MongooseJS functionality
 
-// Returns all pets in database
+// Returns an array of all pets registered in database
 async function getAllPets() { 
      return await Pet.find({});
 }
@@ -23,9 +23,9 @@ async function createNewPet(petDetails) {
           color: petDetails.color,
           gender: petDetails.gender,
           age: petDetails.Number,
-          favouriteToys: petDetails.favouriteToys,
-          dietaryRequirements: petDetails.dietaryRequirements,
-          allergies: petDetails.allergies,
+          favouriteToy: petDetails.favouriteToy,
+          dietaryRequirement: petDetails.dietaryRequirement,
+          allergy: petDetails.allergy,
      });
  
    // And save it to DB
@@ -49,6 +49,9 @@ async function updatePetDetails(petDetails) {
 async function deletePetDetails(petId) {
      return await Pet.findByIdAndDelete(petId).exec();
 }
+
+// --------------------------------------
+// ----- Exports
 
 
 module.exports = {

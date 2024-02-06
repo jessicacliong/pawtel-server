@@ -167,7 +167,7 @@ async function getUserIdFromJwt(userJWT) {
     }
   } catch (error) {
     // Handle JWT verification errors
-    throw new Error('Invalid user token.');
+    throw new Error('JWT verification error');
   }
 }
 

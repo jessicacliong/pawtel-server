@@ -31,22 +31,25 @@ const PetSchema = new mongoose.Schema({
           required: false,
           unique: false
      },
-     favouriteToys: {
-          type: [String],
+     favouriteToy: {
+          type: String,
           required: false,
-          unique: false
+          unique: false,
+          default: 'None'
      },
-     dietaryRequirements: {
-          type: [String],
+     dietaryRequirement: {
+          type: String,
           required: false,
-          unique: false
+          unique: false, 
+          default: 'None'
      },
-     allergies: {
-          type: [String],
+     allergy: {
+          type: String,
           required: false,
-          unique: false
+          unique: false,
+          default: 'None'
      },
-     user: {
+     ownerId: {
 		type: mongoose.Types.ObjectId,
 		ref: 'User'
 	},

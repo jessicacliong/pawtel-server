@@ -6,7 +6,7 @@ const express = require('express');
 const app = express();
 
 // If no process.env.X is found, assign a default value instead.
-const PORT = process.env.PORT || 3030;
+const PORT = process.env.PORT || 3033;
 
 
 // Configure some basic Helmet settings on the server instance.

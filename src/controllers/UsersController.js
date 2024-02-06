@@ -102,7 +102,6 @@ router.post(
 // /users/
 router.get(
   '/',
-    verifyJwtHeader,
     async (request, response) => {
       let allUsers = await getAllUsers();
 
@@ -116,6 +115,7 @@ router.get(
 // /users/:userId
 router.get(
   '/:userId', 
+  // verifyJwtHeader,
      async (request, response, next) => {
       try {
         const user = await User.findOne({_id: request.params.userId});
@@ -123,7 +123,9 @@ router.get(
         if (!user) {
           return response.status(404).json({message: 'User not found'});
         }
+
         return response.json(user);
+
       } catch (error) {
         next(error);
       }
@@ -166,11 +168,7 @@ async (request, response, next) => {
 
     const updatedUser = await updateUser(userDetails);
 
-    if (!updatedUser) {
-      return response.status(404).json({message: 'User not found'});
-    }
-
-    return response.json(updatedUser)
+    return response.json(updatedUser);
   } catch (error) {
     next(error);
   }

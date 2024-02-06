@@ -113,7 +113,7 @@ async function seedDatabase() {
 }
 
 
-     // let newPet = await Pet.create({
+     // let newPet = {
      //      name: "Puma",
      //      animalType: "dog",
      //      breed: "Chow-chow",
@@ -124,7 +124,7 @@ async function seedDatabase() {
      //      dietaryRequirements: ["none"],
      //      allergies: ["none"],
      //      user: newUser._id
-     // });
+     // }
 
 
      // let newBooking = await Booking.create({
