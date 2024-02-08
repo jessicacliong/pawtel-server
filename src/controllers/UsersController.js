@@ -64,18 +64,17 @@ router.post(
   async (request, response, next) => {
     try {
        let targetUser = await User.findOne({email: request.body.email}).exec();
-       console.log(targetUser)
        if (!targetUser) {
          return response.status(404).json({message: 'User not found.'});
        }
    
        if (await validateHashedData(request.body.password, targetUser.password)) {
          let encryptedUserJwt = await generateUserJWT({
-           userId: targetUser.userId,
+           userId: targetUser._id,
            email: targetUser.email,
            password: targetUser.password,
          });
-         response.json({jwt: encryptedUserJwt});
+         response.json({jwt : encryptedUserJwt});
        } else {
          response.status(401).json({message: 'Invalid password.'});
        }
@@ -96,7 +95,7 @@ router.post(
     } catch (error) {
       next(error);
     }
-  });
+});
 
 // Get all existing users
 // /users/
@@ -133,18 +132,17 @@ router.get(
   );
 
 // Update an existing user
-router.put('/:userId', 
-verifyJwtHeader,
-errorHandler,
+router.put('/:userId',
+verifyJwtHeader, 
 async (request, response, next) => {
   try {
-    const requestUserId = await getUserIdFromJwt(request.headers.jwt);
+    const requestingUserId = await getUserIdFromJwt(request.headers.jwt);
+    const targetUserId = request.params.userId;
 
-    // Ensure that the user can only update their own account
-    if (requestUserId !== request.params.userId) {
-      return response
-        .status(403)
-        .json({message: 'Unauthorised: You can only update your own account!'});
+    // Check if the user making the request is the same as the user whose data is being deleted
+    if (requestingUserId !== targetUserId) {
+      return response.status(403)
+        .json({message: 'Unauthorised: You can only update your own account'});
     }
 
     const {
@@ -186,8 +184,8 @@ router.delete(
 
       // Check if the user making the request is the same as the user whose data is being deleted
       if (requestingUserId !== targetUserId) {
-        return response.status(403).json({
-          message: 'Unauthorised. You can only delete your own account.',
+        return response.status(403)
+          .json({message: 'Unauthorised. You can only delete your own account.',
         });
       }
 

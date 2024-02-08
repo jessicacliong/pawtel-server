@@ -17,15 +17,15 @@ let cipher = crypto.createCipheriv(encAlgorithm, encPrivateKey, encIV);
 let decipher = crypto.createDecipheriv(encAlgorithm, encPrivateKey, encIV);
 
 // Convert a given string into an encrypted string.
-function encryptString(data){
-    cipher = crypto.createCipheriv(encAlgorithm, encPrivateKey, encIV);
-    return cipher.update(data, 'utf8', 'hex') + cipher.final('hex');
+function encryptString(data) {
+  cipher = crypto.createCipheriv(encAlgorithm, encPrivateKey, encIV);
+  return cipher.update(data, 'utf8', 'hex') + cipher.final('hex');
 }
 
 // Turn the encrypted data back into a plaintext string.
-function decryptString(data){
-    decipher = crypto.createDecipheriv(encAlgorithm, encPrivateKey, encIV);
-    return decipher.update(data, 'hex', 'utf8') + decipher.final('utf8');
+function decryptString(data) {
+  decipher = crypto.createDecipheriv(encAlgorithm, encPrivateKey, encIV);
+  return decipher.update(data, 'hex', 'utf8') + decipher.final('utf8');
 }
 
 // Assumes an encrypted string is a JSON object.
@@ -41,18 +41,18 @@ const bcrypt = require('bcryptjs');
 const saltRounds = 10;
 
 // Hashes a string using bcrypt with a specified number of salt rounds
-async function hashString(stringToHash){
-    let saltToAdd = await bcrypt.genSalt(saltRounds);
-    return await bcrypt.hash(stringToHash, saltToAdd);
+async function hashString(stringToHash) {
+  let saltToAdd = await bcrypt.genSalt(saltRounds);
+  return await bcrypt.hash(stringToHash, saltToAdd);
 }
 
 // Validates hashed data by comparing it with provided unhashed data
-async function validateHashedData(providedUnhashedData, storedHashedData){
-     if (providedUnhashedData === undefined || storedHashedData === undefined) {
-          // Handle the case where either of the values is undefined.
-          return false;
-     }
-    return await bcrypt.compare(providedUnhashedData, storedHashedData);
+async function validateHashedData(providedUnhashedData, storedHashedData) {
+  if (providedUnhashedData === undefined || storedHashedData === undefined) {
+    // Handle the case where either of the values is undefined.
+    return false;
+  }
+  return await bcrypt.compare(providedUnhashedData, storedHashedData);
 }
 
 // --------------------------------------
@@ -61,86 +61,81 @@ async function validateHashedData(providedUnhashedData, storedHashedData){
 const jwt = require('jsonwebtoken');
 
 // Generates JSON Web Token (JWT) with provided payload
-function generateJWT(payloadObj){
-     return jwt.sign(payloadObj, process.env.JWT_KEY, { expiresIn: "1d"});
- }
+function generateJWT(payloadObj) {
+  return jwt.sign(payloadObj, process.env.JWT_KEY, {expiresIn: '9h'});
+}
 
 // Generates a JWT with an encrypted payload containing user details.
 async function generateUserJWT(userDetails) {
-     // Encrypt the payload so that it's not plaintext when viewed outside of this app.
-     let encryptedUserData = encryptString(JSON.stringify(userDetails));
-     // The expiresIn option only works if the payload is an object, not a string.
-     // Include userId directly in the payload without encryption.
-     const payload = {
-       userId: userDetails.userId,
-       data: encryptedUserData,
-     };
-     return generateJWT(payload);
-   }
+  // Encrypt the payload so that it's not plaintext when viewed outside of this app.
+  let encryptedUserData = encryptString(JSON.stringify(userDetails));
+  // The expiresIn option only works if the payload is an object, not a string.
+  // Include userId directly in the payload without encryption.
+  const payload = {
+    userId: userDetails._id,
+    data: encryptedUserData,
+  };
+  return generateJWT(payload);
+}
 
 // Verifies and refreshes a user JWT, returning a new JWT with a longer expiration time.
 async function verifyUserJWT(userJWT) {
-     try {
-       let userJwtVerified = jwt.verify(userJWT, process.env.JWT_SECRET, {
-         complete: true,
-       });
-   
-       const nowInSeconds = Math.floor(Date.now() / 1000);
-   
-       if (
-         userJwtVerified.payload.exp &&
-         userJwtVerified.payload.exp < nowInSeconds
-       ) {
-         throw new Error('Token expired');
-       }
-   
-       // Decrypt the encrypted payload.
-       let decryptedJwtPayload = decryptString(userJwtVerified.payload.data);
-   
-       // Parse the decrypted data into an object.
-       let userData = JSON.parse(decryptedJwtPayload);
-   
-       // Find the user mentioned in the JWT.
-       let targetUser = await User.findById(userData.userId).exec();
-   
-       // If the JWT data matches the stored data...
-       if (
-         targetUser &&
-         (targetUser.password, userData.password) &&
-         targetUser.username == userData.username
-       ) {
-         // ...User details are valid, make a fresh JWT to extend their token's valid time
-         return generateJWT({ data: userJwtVerified.payload.data });
-       } else {
-         // Otherwise, user details are invalid and they don't get a new token.
-         // When a frontend receives this error, it should redirect to a sign-in page.
-         throw new Error('Invalid user token.');
-       }
-     } catch (error) {
-       console.error(error);
-   
-       if (error.message === 'Token expired') {
-         // Handle token expiration response
-         response.status(401).json({
-           error: 'Token expired',
-           message: 'The provided token has expired. Please log in again to obtain a new token.'
-         });
-       } else {
-         // Handle other verification errors
-         response.status(401).json({
-           error: 'Invalid JWT',
-           message: 'The provided token is invalid.'
-         });
-       }
-     }
-   }
+  try {
+    let userJwtVerified = jwt.verify(userJWT, process.env.JWT_KEY, {
+      complete: true,
+    });
+
+    // const nowInSeconds = Math.floor(Date.now() / 1000);
+
+    // if (
+    //   userJwtVerified.payload.exp &&
+    //   userJwtVerified.payload.exp < nowInSeconds
+    // ) {
+    //   throw new Error('Token expired');
+    // }
+
+    // Decrypt the encrypted payload.
+    let decryptedJwtPayload = decryptString(userJwtVerified.payload.data);
+
+    // Parse the decrypted data into an object.
+    let userData = JSON.parse(decryptedJwtPayload);
+
+    // Find the user mentioned in the JWT.
+    let targetUser = await User.findById(userData.userId).exec();
+
+    // If the JWT data matches the stored data...
+    if (
+      targetUser &&
+      (targetUser.password == userData.password) &&
+      targetUser.email == userData.email
+    ) {
+      // ...User details are valid, make a fresh JWT to extend their token's valid time
+      return generateJWT({ data: userJwtVerified.payload.data });
+    } else {
+      // Otherwise, user details are invalid and they don't get a new token.
+      // When a frontend receives this error, it should redirect to a sign-in page.
+      throw new Error('Invalid user token.');
+    }
+  } catch (error) {
+    console.error(error);
+
+    if (error.message === 'Token expired') {
+      // Throw an error with a specific message for token expiration
+      throw new Error('TokenExpired');
+    } else {
+      // Throw a generic error for other verification errors
+      throw new Error('InvalidToken');
+    }
+  }
+}
+
    
 
 // Returns the user Id extracted from a user JWT.
 
 async function getUserIdFromJwt(userJWT) {
   try {
-    let userJwtVerified = jwt.verify(userJWT, process.env.JWT_SECRET, {
+    let userJwtVerified = jwt.verify(userJWT, process.env.JWT_KEY, {
       complete: true,
     });
 
@@ -167,9 +162,11 @@ async function getUserIdFromJwt(userJWT) {
     }
   } catch (error) {
     // Handle JWT verification errors
-    throw new Error('JWT verification error');
+    throw new Error('Invalid user token.');
   }
 }
+
+
 
    
 

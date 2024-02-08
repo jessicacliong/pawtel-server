@@ -3,21 +3,51 @@ const { User } = require('../models/UserModel');
 
 // Middleware to verify if the JWT is available in the headers
 const verifyJwtHeader = async (request, response, next) => {
-     try {
-       let rawJwtHeader = request.headers.jwt;
-   
-       let jwtRefresh = await verifyUserJWT(rawJwtHeader);
-   
-       request.headers.jwt = jwtRefresh;
-   
-       next();
-     } catch (error) {
-       // Handle JWT verification errors
-       response.status(401).json({
-         error: 'Invalid JWT',
-       });
-     }
-   };
+  try {
+    const rawJwtHeader = request.headers.jwt;
+
+    let jwtRefresh;
+    try {
+      jwtRefresh = await verifyUserJWT(rawJwtHeader);
+    } catch (error) {
+      handleJwtVerificationError(error, response);
+      return;
+    }
+
+    request.headers.jwt = jwtRefresh;
+    next();
+  } catch (error) {
+    handleGenericError(error, response);
+  }
+};
+
+// Handles errors related to JWT verification and sends appropriate responses.
+const handleJwtVerificationError = (error, response) => {
+  if (error.message === 'TokenExpired') {
+    response.status(401).json({
+      error: 'Token expired',
+      message:
+        'The provided token has expired. Please log in again to obtain a new token.',
+    });
+  } else if (error.message === 'InvalidToken') {
+    response.status(401).json({
+      error: 'Invalid JWT',
+      message: 'The provided token is invalid.',
+    });
+  } else {
+    handleGenericError(error, response);
+  }
+};
+
+// Handles generic errors and sends an internal server error response.
+const handleGenericError = (error, response) => {
+  console.error(error);
+  response.status(500).json({
+    error: 'Internal Server Error',
+    message: error.message,
+  });
+};
+
 
 // Middleware to handle uncaught errors
 const errorHandler = (error, request, response, next) => {
@@ -53,6 +83,8 @@ const uniqueEmailCheck = async (request, response, next) => {
 
 module.exports = {
      verifyJwtHeader,
+     handleJwtVerificationError,
+     handleGenericError,
      errorHandler,
      uniqueEmailCheck,
 };
