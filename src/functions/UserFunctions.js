@@ -103,14 +103,17 @@ async function verifyUserJWT(userJWT) {
     // Find the user mentioned in the JWT.
     let targetUser = await User.findById(userData.userId).exec();
 
-    // If the JWT data matches the stored data...
+    // If the JWT data matches the stored data
     if (
       targetUser &&
       (targetUser.password == userData.password) &&
       targetUser.email == userData.email
     ) {
-      // ...User details are valid, make a fresh JWT to extend their token's valid time
-      return generateJWT({ data: userJwtVerified.payload.data });
+      // User details are valid, make a fresh JWT to extend their token's valid time
+      const newToken = generateJWT({ data: userJwtVerified.payload.data });
+      
+      // Return the new token to the client 
+      return newToken;
     } else {
       // Otherwise, user details are invalid and they don't get a new token.
       // When a frontend receives this error, it should redirect to a sign-in page.

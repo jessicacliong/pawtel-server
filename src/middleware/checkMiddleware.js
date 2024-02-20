@@ -86,5 +86,5 @@ module.exports = {
      handleJwtVerificationError,
      handleGenericError,
      errorHandler,
-     uniqueEmailCheck,
+     uniqueEmailCheck
 };

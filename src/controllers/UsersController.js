@@ -12,7 +12,6 @@ const {
   decryptString,
   decryptObject,
   validateHashedData,
-  generateJWT,
   generateUserJWT,
   verifyUserJWT,
   getUserIdFromJwt,
@@ -25,9 +24,9 @@ const {
 
 
 const {
-     verifyJwtHeader,
-     errorHandler,
-     uniqueEmailCheck
+  verifyJwtHeader,
+  errorHandler,
+  uniqueEmailCheck
 } = require('../middleware/checkMiddleware');
 
 
