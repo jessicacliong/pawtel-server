@@ -191,7 +191,7 @@ router.delete(
       // Proceed with the delete operation
       const deletedUser = await deleteUser(targetUserId);
 
-      return response.json({message: 'User successfully deleted '});
+      return response.json({message: 'User successfully deleted.'});
     } catch (error) {
       next(error);
     }

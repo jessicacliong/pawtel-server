@@ -16,7 +16,7 @@ const PetSchema = new mongoose.Schema({
           required: true,
           unique: false
      },
-	color: {
+	colour: {
           type: String,
           required: true,
           unique: false
@@ -31,27 +31,27 @@ const PetSchema = new mongoose.Schema({
           required: false,
           unique: false
      },
-     favouriteToy: {
-          type: String,
+     favouriteToys: {
+          type: [String],
           required: false,
           unique: false,
           default: 'None'
      },
-     dietaryRequirement: {
-          type: String,
+     dietaryRequirements: {
+          type: [String],
           required: false,
           unique: false, 
           default: 'None'
      },
-     allergy: {
-          type: String,
+     allergies: {
+          type: [String],
           required: false,
           unique: false,
           default: 'None'
      },
-     ownerId: {
+     userId: {
 		type: mongoose.Types.ObjectId,
-		ref: 'User'
+		ref: 'User',
 	},
      
 });

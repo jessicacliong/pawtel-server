@@ -37,8 +37,8 @@ async function updatePetDetails(petDetails) {
      try {
      return await Pet.findByIdAndUpdate(
           petDetails.petId,
-          updatedData,
-          { new: true }
+          petDetails.updatedData,
+          { returnDocuments: 'after' }
      ).exec();
      } catch (error) {
      throw new Error(`Error updating pet details: ${error.message}`);
@@ -49,6 +49,8 @@ async function updatePetDetails(petDetails) {
 async function deletePetDetails(petId) {
      return await Pet.findByIdAndDelete(petId).exec();
 }
+
+
 
 // --------------------------------------
 // ----- Exports

@@ -64,6 +64,7 @@ const errorHandler = (error, request, response, next) => {
      });
    };
 
+   
 // Middleware to validate a unique user email is used
 const uniqueEmailCheck = async (request, response, next) => {
      try {

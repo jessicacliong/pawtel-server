@@ -69,11 +69,33 @@ async function seedDatabase() {
     //      }
     // ]
 
-    // const Pet = [
-    //      {
-    //
-    //      }
-    // ]
+    const petData1 =
+        {
+        name: "Puma",
+        animalType: "dog",
+        breed: "Chow-chow",
+        colour: "brown",
+        gender: "male",
+        age: 2,
+        favouriteToys: "ball, squeaky toy, favourite blanket",
+        dietaryRequirements: "None",
+        allergies: "None",
+        userId: [],  
+        };
+
+    const petData2 = 
+        {
+        name: "Kiki",
+        animalType: "dog",
+        breed: "Pomeranian",
+        colour: "white",
+        gender: "female",
+        age: 1,
+        favouriteToys: "teddy bear, rubber ducky",
+        dietaryRequirements: "vegetarian",
+        allergies: "red meat",
+        userId: [],
+        }
 
     // const Booking = [
     //      {    
@@ -91,13 +113,20 @@ async function seedDatabase() {
         user.password = await hashString(user.password);
     }
     // Save the users to the database.
-    let usersCreated = await User.insertMany(users);
+    const usersCreated = await User.insertMany(users);
+
+    petData1.userId = usersCreated[0]._id;
+
+    petData2.userId = usersCreated[1]._id;
+
+    const petsCreated = await Pet.create(petData1, petData2);
  
     console.log(
         'New DB data created\n' + 
             JSON.stringify(
                 {
-                    users: usersCreated
+                    users: usersCreated,
+                    pets: petsCreated,
                 }, 
                 null, 
                 4
@@ -123,7 +152,7 @@ async function seedDatabase() {
      //      favouriteToys: ["ball","squeaky toy","favourite blanket"],
      //      dietaryRequirements: ["none"],
      //      allergies: ["none"],
-     //      user: newUser._id
+     //      user: 
      // }
 
 

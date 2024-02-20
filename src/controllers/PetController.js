@@ -3,9 +3,15 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 
 const { Pet } = require('../models/PetModel');
-const { errorHandler } = require('../middleware/checkMiddleware');
 
-const router = express.Router();
+const router = express.Router()
+
+const { 
+     errorHandler,
+     verifyJwtHeader, 
+} = require('../middleware/checkMiddleware');
+
+
 
 const {
      getOnePet,
@@ -14,12 +20,15 @@ const {
      updatePetDetails,
      deletePetDetails
 } = require('../functions/PetFunctions');
-const { filterUndefinedProperty } = require('../functions/UserFunctions');
+
+const { 
+     filterUndefinedProperty 
+} = require('../functions/UserFunctions');
 
 router.get('/',
     //  verifyJwtHeader,
      async (request, response) => {
-          let result = await Pet.find({});
+          let result = await getAllPets();
           response.json({result});
 });
 
@@ -27,8 +36,7 @@ router.get('/:petId',
     //  verifyJwtHeader,
 async (request, response, next) => {
      try {
-          const pet = Pet.find({petId: request.params._id}
-          );
+          const pet = await getOnePet({_id: request.params.petId});
           if (!pet) {
             return response.status(404).json({message: 'Pet not found'});
           }
@@ -40,7 +48,7 @@ async (request, response, next) => {
 );
 
 router.post('/:petId',
-// verifyJwtHeader,
+verifyJwtHeader,
 errorHandler,
 async (request, response) => {
      try {
@@ -67,7 +75,8 @@ async (request, response) => {
      }
 );
 
-router.put("/",
+router.put('/:petId',
+verifyJwtHeader,
 errorHandler,
 async (request, response, next) => {
      try {
@@ -85,7 +94,7 @@ async (request, response, next) => {
 
           const petDetails = {
                petId: request.params.petId,
-               updatedData: filterUndefinedProperty({
+               updatedData: {
                     name,
                     animalType,
                     breed,
@@ -95,10 +104,10 @@ async (request, response, next) => {
                     favouriteToy,
                     dietaryRequirement,
                     allergy,
-               }),
+               },
           };
           
-          const updatedPet = await updatePet(petDetails);
+          const updatedPet = await updatePetDetails(petDetails);
 
           return response.json(updatedPet);
      } catch (error) {
@@ -106,16 +115,16 @@ async (request, response, next) => {
      }
 });
 
-router.delete("/",
+router.delete('/:petId', 
+verifyJwtHeader,
+errorHandler,
 async (request, response, next) => {
      try {
           const petId = request.params.petId;
 
-          const deletePet = await deletePet(petId);
+          const deletePet = await deletePetDetails(petId);
 
-          return response.json({
-               message: 'Pet successfully deleted'
-          });
+          return response.json('Pet successfully deleted.');
      } catch (error) {
           next (error);
      }
