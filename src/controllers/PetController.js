@@ -47,8 +47,8 @@ async (request, response, next) => {
       }
 );
 
-router.post('/:petId',
-verifyJwtHeader,
+router.post('/',
+// verifyJwtHeader,
 errorHandler,
 async (request, response) => {
      try {
@@ -56,12 +56,13 @@ async (request, response) => {
                name: request.body.name,
                animalType: request.body.animalType,
                breed: request.body.breed, 
-               color: request.body.color,
+               colour: request.body.colour,
                gender: request.body.gender,
                age: request.body.age,
-               favouriteToy: request.body.favouriteToy,
-               dietaryRequirement: request.body.dietaryRequirement,
-               allergy: request.body.allergy,
+               favouriteToy: request.body.favouriteToys,
+               dietaryRequirement: request.body.dietaryRequirements,
+               allergy: request.body.allergies,
+               userId: request.body.userId
           };
 
           let newPet = await createNewPet(petDetails);
@@ -69,14 +70,14 @@ async (request, response) => {
           response.json({
                newPet
           });
-          } catch (error) {
+          } catch(error) {
                next(error);
           }
      }
 );
 
 router.put('/:petId',
-verifyJwtHeader,
+// verifyJwtHeader,
 errorHandler,
 async (request, response, next) => {
      try {
@@ -84,12 +85,13 @@ async (request, response, next) => {
                name,
                animalType,
                breed,
-               color,
+               colour,
                gender,
                age,
-               favouriteToy,
-               dietaryRequirement,
-               allergy,
+               favouriteToys,
+               dietaryRequirements,
+               allergies,
+               userId,
           } = request.body;
 
           const petDetails = {
@@ -98,25 +100,26 @@ async (request, response, next) => {
                     name,
                     animalType,
                     breed,
-                    color,
+                    colour,
                     gender,
                     age,
-                    favouriteToy,
-                    dietaryRequirement,
-                    allergy,
+                    favouriteToys,
+                    dietaryRequirements,
+                    allergies,
+                    userId,
                },
           };
           
           const updatedPet = await updatePetDetails(petDetails);
 
-          return response.json(updatedPet);
+          return response.json(`Pet Details Updated. ${updatedPet}`);
      } catch (error) {
           next (error);
      }
 });
 
 router.delete('/:petId', 
-verifyJwtHeader,
+// verifyJwtHeader,
 errorHandler,
 async (request, response, next) => {
      try {

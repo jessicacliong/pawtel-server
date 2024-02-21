@@ -20,12 +20,13 @@ async function createNewPet(petDetails) {
           name: petDetails.name,
           animalType: petDetails.animalType,
           breed: petDetails.breed,
-          color: petDetails.color,
+          colour: petDetails.colour,
           gender: petDetails.gender,
           age: petDetails.Number,
-          favouriteToy: petDetails.favouriteToy,
-          dietaryRequirement: petDetails.dietaryRequirement,
-          allergy: petDetails.allergy,
+          favouriteToys: petDetails.favouriteToys,
+          dietaryRequirements: petDetails.dietaryRequirements,
+          allergies: petDetails.allergies,
+          userId: petDetails.userId
      });
  
    // And save it to DB

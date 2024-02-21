@@ -15,6 +15,7 @@ const verifyJwtHeader = async (request, response, next) => {
     }
 
     request.headers.jwt = jwtRefresh;
+    
     next();
   } catch (error) {
     handleGenericError(error, response);
