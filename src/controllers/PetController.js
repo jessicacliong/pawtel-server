@@ -29,7 +29,9 @@ router.get('/',
     //  verifyJwtHeader,
      async (request, response) => {
           let result = await getAllPets();
-          response.json({result});
+          response.json({
+               result
+          });
 });
 
 router.get('/:petId',
@@ -112,7 +114,7 @@ async (request, response, next) => {
           
           const updatedPet = await updatePetDetails(petDetails);
 
-          return response.json(`Pet Details Updated. ${updatedPet}`);
+          return response.json(updatedPet);
      } catch (error) {
           next (error);
      }

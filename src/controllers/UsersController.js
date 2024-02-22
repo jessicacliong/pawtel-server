@@ -105,7 +105,7 @@ router.get(
 
       response.json({
         userCount: allUsers.length,
-        usersArray: allUsers
+        users: allUsers
     });
   });
 
