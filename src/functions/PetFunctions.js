@@ -51,7 +51,11 @@ async function deletePetDetails(petId) {
      return await Pet.findByIdAndDelete(petId).exec();
 }
 
-
+function filterUndefinedProperties(obj) {
+     return Object.fromEntries(
+       Object.entries(obj).filter(([_, v]) => v !== undefined)
+     );
+}
 
 // --------------------------------------
 // ----- Exports
@@ -62,5 +66,6 @@ module.exports = {
      getOnePet,
      createNewPet,
      updatePetDetails,
-     deletePetDetails
+     deletePetDetails,
+     filterUndefinedProperties
 }

@@ -12,7 +12,7 @@ const RoomSchema = new mongoose.Schema({
 RoomSchema.pre(
      'save',
      async function (next) {
-          console.log("About to save room model to PawtelDB");
+          console.log("Saving room model to PawtelDB");
           next();
      }
 )

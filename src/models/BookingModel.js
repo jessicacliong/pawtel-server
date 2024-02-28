@@ -1,6 +1,11 @@
 const mongoose = require('mongoose');
 
 const BookingSchema = new mongoose.Schema({
+     roomType: {
+          type: String,
+          required: true,
+          unique: false
+     },
      startDate: {
           type: Date,
           required: true,
@@ -11,16 +16,16 @@ const BookingSchema = new mongoose.Schema({
           required: true,
           unique: false
      },
-     pet: {
+     petId: {
 		type: mongoose.Types.ObjectId,
-		ref: 'Pet'
+		ref: 'Pet',
 	}
 });
 
 BookingSchema.pre(
      'save',
      async function (next) {
-          console.log("About to save booking model to PawtelDB");
+          console.log("Saving booking model to PawtelDB");
           next();
      }
 )
@@ -37,6 +42,7 @@ const Booking = mongoose.model(`Booking`, {
      roomType: String,
      startDate: Date,
      endDate: Date
+     petId:
 }
 
 */

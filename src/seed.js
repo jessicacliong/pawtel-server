@@ -69,7 +69,7 @@ async function seedDatabase() {
     //      }
     // ]
 
-    const petData1 =
+    const petData = [
         {
         name: "Puma",
         animalType: "dog",
@@ -80,10 +80,8 @@ async function seedDatabase() {
         favouriteToys: "ball, squeaky toy, favourite blanket",
         dietaryRequirements: "None",
         allergies: "None",
-        userId: [],  
-        };
-
-    const petData2 = 
+        userId: null,
+        }, 
         {
         name: "Kiki",
         animalType: "dog",
@@ -94,16 +92,24 @@ async function seedDatabase() {
         favouriteToys: "teddy bear, rubber ducky",
         dietaryRequirements: "vegetarian",
         allergies: "red meat",
-        userId: [],
+        userId: null,
         }
+    ];
 
-    // const Booking = [
-    //      {    
-    //          startDate: new Date('2023-01-01T09:00:00Z'),
-    //          endDate: new Date('2023-01-10T09:00:00Z'),
-    //          pet: newPet._id
-    //      }
-    // ]
+    const bookingData = [
+        {    
+        roomType: "Standard",
+        startDate: new Date('2024-01-01T09:00:00Z'),
+        endDate: new Date('2024-01-10T09:00:00Z'),
+        petId: null,
+        },
+        {
+        roomType: "Deluxe",
+        startDate: new Date('2024-02-01T09:00:00Z'),
+        endDate: new Date('2024-02-10T09:00:00Z'),
+        petId: null,
+        }
+    ];
 
     // Hash passwords and create users
     // Iterate through the users array
@@ -115,18 +121,26 @@ async function seedDatabase() {
     // Save the users to the database.
     const usersCreated = await User.insertMany(users);
 
-    petData1.userId = usersCreated[0]._id;
+    petData[0].userId = usersCreated[0]._id;
+    petData[1].userId = usersCreated[1]._id;
 
-    petData2.userId = usersCreated[1]._id;
+    // Save the pets to the database
+    const petsCreated = await Pet.insertMany(petData);
 
-    const petsCreated = await Pet.create(petData1, petData2);
- 
+    // Update the booking data with petId staying in the room
+    bookingData[0].petId = petsCreated[0]._id;
+    bookingData[1].petId = petsCreated[1]._id;
+
+    // Save the rooms to the database.
+    const bookingsCreated = await Booking.insertMany(bookingData);
+
     console.log(
         'New DB data created\n' + 
             JSON.stringify(
                 {
                     users: usersCreated,
                     pets: petsCreated,
+                    bookings: bookingsCreated,
                 }, 
                 null, 
                 4
@@ -140,32 +154,6 @@ async function seedDatabase() {
         console.log('DB seed connection closed.');
     }
 }
-
-
-     // let newPet = {
-     //      name: "Puma",
-     //      animalType: "dog",
-     //      breed: "Chow-chow",
-     //      colour: "brown",
-     //      gender: "male",
-     //      age: 2,
-     //      favouriteToys: ["ball","squeaky toy","favourite blanket"],
-     //      dietaryRequirements: ["none"],
-     //      allergies: ["none"],
-     //      user: 
-     // }
-
-
-     // let newBooking = await Booking.create({
-     //      startDate: new Date('2023-01-01T09:00:00Z'),
-     //      endDate: new Date('2023-01-10T09:00:00Z'),
-     //      pet: newPet._id
-     // });
-
-
-     // let newRoom = await Room.create({
-     //      roomType: "Standard"
-     // });
 
 
 seedDatabase();

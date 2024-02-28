@@ -18,7 +18,8 @@ const {
      getAllPets,
      createNewPet,
      updatePetDetails,
-     deletePetDetails
+     deletePetDetails,
+     filterUndefinedProperties
 } = require('../functions/PetFunctions');
 
 const { 
@@ -83,6 +84,12 @@ router.put('/:petId',
 errorHandler,
 async (request, response, next) => {
      try {
+
+          const pet = await getOnePet({_id: request.params.petId});
+          if (!pet) {
+            return response.status(404).json({message: 'Pet not found'});
+          }
+
           const {
                name,
                animalType,
@@ -98,7 +105,7 @@ async (request, response, next) => {
 
           const petDetails = {
                petId: request.params.petId,
-               updatedData: {
+               updatedData: filterUndefinedProperties({
                     name,
                     animalType,
                     breed,
@@ -109,7 +116,7 @@ async (request, response, next) => {
                     dietaryRequirements,
                     allergies,
                     userId,
-               },
+               }),
           };
           
           const updatedPet = await updatePetDetails(petDetails);

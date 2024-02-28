@@ -59,7 +59,7 @@ const PetSchema = new mongoose.Schema({
 PetSchema.pre(
      'save',
      async function (next) {
-          console.log("About to save pet model to PawtelDB");
+          console.log("Saving pet model to PawtelDB");
           next();
      }
 )
