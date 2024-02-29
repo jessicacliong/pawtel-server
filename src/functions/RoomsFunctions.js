@@ -1,19 +1,24 @@
 const { Room } = require("./models/RoomModel")
 
+const dotenv = require('dotenv');
+dotenv.config();
+
+// --------------------------------------
+ // ----- MongoDB/MongooseJS functionality
 
 async function getAllRooms() {
-     let allRooms = await Room.find({});
-     return allRooms
+     return allRooms = await Room.find({});
 }
 
-async function getARoom() {
-     return await Booking.findOne();
+async function getARoom(roomId) {
+     return await Booking.findOne({_id: roomId});
 }
 
 // Create new room
 async function createNewRoom(roomDetails) {
      let newRoom = new Room({
           roomType: roomDetails.roomType,
+          pricePerNight: roomDetails.pricePerNight,
      });
  
    // And save it to DB
@@ -25,7 +30,7 @@ async function updateRoomDetails(roomDetails) {
      try {
      return await Room.findByIdAndUpdate(
           roomDetails.roomId,
-          updatedData,
+          roomDetails.updatedData,
           { new: true }
      ).exec();
      } catch (error) {
@@ -37,10 +42,18 @@ async function updateRoomDetails(roomDetails) {
 async function deleteRoomDetails(roomId) {
      return await Room.findByIdAndDelete(roomId).exec();
 }
+
+function filterUndefinedProperties(obj) {
+     return Object.fromEntries(
+       Object.entries(obj).filter(([_, v]) => v !== undefined)
+     );
+}
+
 module.exports = {
      getAllRooms,
      getARoom,
      createNewRoom,
      updateRoomDetails,
-     deleteRoomDetails
+     deleteRoomDetails,
+     filterUndefinedProperties
 }

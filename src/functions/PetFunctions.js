@@ -1,5 +1,7 @@
 const { Pet } = require("../models/PetModel");
 
+const dotenv = require('dotenv');
+dotenv.config();
 
 // --------------------------------------
  // ----- MongoDB/MongooseJS functionality

@@ -26,8 +26,9 @@ const {
      filterUndefinedProperty 
 } = require('../functions/UserFunctions');
 
-router.get('/',
-    //  verifyJwtHeader,
+router.get(
+     '/',
+    // verifyJwtHeader,
      async (request, response) => {
           let result = await getAllPets();
           response.json({
@@ -35,77 +36,66 @@ router.get('/',
           });
 });
 
-router.get('/:petId',
-    //  verifyJwtHeader,
-async (request, response, next) => {
-     try {
-          const pet = await getOnePet({_id: request.params.petId});
-          if (!pet) {
-            return response.status(404).json({message: 'Pet not found'});
+router.get(
+     '/:petId',
+     //  verifyJwtHeader,
+     async (request, response, next) => {
+          try {
+               const pet = await getOnePet({_id: request.params.petId});
+               if (!pet) {
+               return response.status(404).json({message: 'Pet not found'});
+               }
+               return response.json(pet);
+          } catch (error) {
+               next(error);
           }
-          return response.json(pet);
-        } catch (error) {
-          next(error);
-        }
-      }
+     }
 );
 
-router.post('/',
-// verifyJwtHeader,
-errorHandler,
-async (request, response) => {
-     try {
-          const petDetails = {
-               name: request.body.name,
-               animalType: request.body.animalType,
-               breed: request.body.breed, 
-               colour: request.body.colour,
-               gender: request.body.gender,
-               age: request.body.age,
-               favouriteToy: request.body.favouriteToys,
-               dietaryRequirement: request.body.dietaryRequirements,
-               allergy: request.body.allergies,
-               userId: request.body.userId
-          };
+router.post(
+     '/',
+     // verifyJwtHeader,
+     errorHandler,
+     async (request, response) => {
+          try {
+               const petDetails = {
+                    name: request.body.name,
+                    animalType: request.body.animalType,
+                    breed: request.body.breed, 
+                    colour: request.body.colour,
+                    gender: request.body.gender,
+                    age: request.body.age,
+                    favouriteToy: request.body.favouriteToys,
+                    dietaryRequirement: request.body.dietaryRequirements,
+                    allergy: request.body.allergies,
+                    userId: request.body.userId
+               };
 
-          let newPet = await createNewPet(petDetails);
-               
-          response.json({
-               newPet
-          });
+               let newPet = await createNewPet(petDetails);
+                    
+               response.json({
+                    newPet
+               });
           } catch(error) {
                next(error);
           }
      }
 );
 
-router.put('/:petId',
-// verifyJwtHeader,
-errorHandler,
-async (request, response, next) => {
-     try {
+router.put(
+     '/:petId',
+     // verifyJwtHeader,
+     errorHandler,
+     async (request, response, next) => {
+          try {
 
-          const pet = await getOnePet({_id: request.params.petId});
-          if (!pet) {
-            return response.status(404).json({message: 'Pet not found'});
-          }
+               const pet = await getOnePet({_id: request.params.petId});
+               
+               if (!pet) {
+                    return response.status(404).json({message: 'Pet not found'});
+               }
 
-          const {
-               name,
-               animalType,
-               breed,
-               colour,
-               gender,
-               age,
-               favouriteToys,
-               dietaryRequirements,
-               allergies,
-               userId,
-          } = request.body;
-
-          const petDetails = {
-               petId: request.params.petId,
-               updatedData: filterUndefinedProperties({
+               const {
                     name,
                     animalType,
                     breed,
@@ -116,30 +106,47 @@ async (request, response, next) => {
                     dietaryRequirements,
                     allergies,
                     userId,
-               }),
-          };
-          
-          const updatedPet = await updatePetDetails(petDetails);
+               } = request.body;
 
-          return response.json(updatedPet);
-     } catch (error) {
-          next (error);
-     }
-});
+               const petDetails = {
+                    petId: request.params.petId,
+                    updatedData: filterUndefinedProperties({
+                         name,
+                         animalType,
+                         breed,
+                         colour,
+                         gender,
+                         age,
+                         favouriteToys,
+                         dietaryRequirements,
+                         allergies,
+                         userId,
+                    }),
+               };
+               
+               const updatedPet = await updatePetDetails(petDetails);
 
-router.delete('/:petId', 
-// verifyJwtHeader,
-errorHandler,
-async (request, response, next) => {
-     try {
-          const petId = request.params.petId;
+               return response.json(updatedPet);
+          } catch (error) {
+               next (error);
+          }
+     });
 
-          const deletePet = await deletePetDetails(petId);
+router.delete(
+     '/:petId', 
+     // verifyJwtHeader,
+     errorHandler,
+          async (request, response, next) => {
+               try {
+                    const petId = request.params.petId;
 
-          return response.json('Pet successfully deleted.');
-     } catch (error) {
-          next (error);
-     }
-});
+                    const deletePet = await deletePetDetails(petId);
+
+                    return response.json('Pet successfully deleted.');
+
+               } catch (error) {
+                    next (error);
+               }
+          });
 
 module.exports = router;

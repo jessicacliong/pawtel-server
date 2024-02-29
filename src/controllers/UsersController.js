@@ -32,29 +32,30 @@ const {
 
 // Register a new user
 // /users/register
-router.post('/register', 
-uniqueEmailCheck, 
-errorHandler,
-async (request, response, next) => {
-  try {
-    const userDetails = {
-      firstName: request.body.firstName,
-      lastName: request.body.lastName,
-      email: request.body.email,
-      username: request.body.username,
-      password: request.body.password,
-    };
-  
-    let newUser = await createUser(userDetails);
-    
-    response.json({
-      newUser
-    });
-    } catch (error) {
-      next(error);
-    } 
-  }
-);
+router.post(
+  '/register', 
+  uniqueEmailCheck, 
+  errorHandler,
+    async (request, response, next) => {
+      try {
+        const userDetails = {
+          firstName: request.body.firstName,
+          lastName: request.body.lastName,
+          email: request.body.email,
+          username: request.body.username,
+          password: request.body.password,
+        };
+      
+        let newUser = await createUser(userDetails);
+        
+        response.json({
+          newUser
+        });
+        } catch (error) {
+          next(error);
+        } 
+      }
+    );
 
 // Login an existing user
 // Post users/login

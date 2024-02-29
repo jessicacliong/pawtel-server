@@ -5,6 +5,11 @@ const RoomSchema = new mongoose.Schema({
           type: String,
           required: true,
           unique: false
+     },
+     pricePerNight: {
+          type: Number,
+          required: true,
+          unique: false
      }
 
 });

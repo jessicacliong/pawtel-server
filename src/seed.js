@@ -60,56 +60,59 @@ async function seedDatabase() {
         }
     ];
 
-    // const Room = [
-    //      {
-    //           roomType: "Standard"
-    //      },
-    //      {
-    //           roomType: "Deluxe"
-    //      }
-    // ]
+    const roomData = [
+         {
+            roomType: "Standard",
+            pricePerNight: 100,
+         },
+         {
+            roomType: "Deluxe",
+            pricePerNight: 200,
+         }
+    ]
 
     const petData = [
         {
-        name: "Puma",
-        animalType: "dog",
-        breed: "Chow-chow",
-        colour: "brown",
-        gender: "male",
-        age: 2,
-        favouriteToys: "ball, squeaky toy, favourite blanket",
-        dietaryRequirements: "None",
-        allergies: "None",
-        userId: null,
+            name: "Puma",
+            animalType: "dog",
+            breed: "Chow-chow",
+            colour: "brown",
+            gender: "male",
+            age: 2,
+            favouriteToys: "ball, squeaky toy, favourite blanket",
+            dietaryRequirements: "None",
+            allergies: "None",
+            userId: null,
         }, 
         {
-        name: "Kiki",
-        animalType: "dog",
-        breed: "Pomeranian",
-        colour: "white",
-        gender: "female",
-        age: 1,
-        favouriteToys: "teddy bear, rubber ducky",
-        dietaryRequirements: "vegetarian",
-        allergies: "red meat",
-        userId: null,
+            name: "Kiki",
+            animalType: "dog",
+            breed: "Pomeranian",
+            colour: "white",
+            gender: "female",
+            age: 1,
+            favouriteToys: "teddy bear, rubber ducky",
+            dietaryRequirements: "vegetarian",
+            allergies: "red meat",
+            userId: null,
         }
     ];
 
     const bookingData = [
         {    
-        roomType: "Standard",
-        startDate: new Date('2024-01-01T09:00:00Z'),
-        endDate: new Date('2024-01-10T09:00:00Z'),
-        petId: null,
+            roomType: "Standard",
+            startDate: new Date('2024-01-01T09:00:00Z'),
+            endDate: new Date('2024-01-10T09:00:00Z'),
+            petId: null,
         },
         {
-        roomType: "Deluxe",
-        startDate: new Date('2024-02-01T09:00:00Z'),
-        endDate: new Date('2024-02-10T09:00:00Z'),
-        petId: null,
+            roomType: "Deluxe",
+            startDate: new Date('2024-02-01T09:00:00Z'),
+            endDate: new Date('2024-02-10T09:00:00Z'),
+            petId: null,
         }
     ];
+
 
     // Hash passwords and create users
     // Iterate through the users array
@@ -134,6 +137,8 @@ async function seedDatabase() {
     // Save the rooms to the database.
     const bookingsCreated = await Booking.insertMany(bookingData);
 
+    const roomsCreated = await Room.insertMany(roomData);
+
     console.log(
         'New DB data created\n' + 
             JSON.stringify(
@@ -141,6 +146,7 @@ async function seedDatabase() {
                     users: usersCreated,
                     pets: petsCreated,
                     bookings: bookingsCreated,
+                    rooms: roomsCreated
                 }, 
                 null, 
                 4
