@@ -34,10 +34,10 @@ router.get(
 
 // GET room by roomId
 router.get(
-     '/roomId', 
-     async (request, response) => {
+     '/:roomId', 
+     async (request, response, next) => {
           try {
-               const room = await getRoomById({_id:request.params.roomId})
+               const room = await getARoom({_id:request.params.roomId})
                
                if (!room) {
                return response.status(404).json({message: 'Room not found'});
@@ -72,7 +72,7 @@ router.post(
 
 // Update room details
 router.put(
-     '/roomId',
+     '/:roomId',
 	async (request, response, next) => {
           try {
 
@@ -88,7 +88,7 @@ router.put(
                } = request.body;
 
                const roomDetails = {
-                    roomId: request.params.roomId,,
+                    roomId: request.params.roomId,
                     updatedData: filterUndefinedProperties({
                          roomType,
                          pricePerNight
@@ -105,14 +105,20 @@ router.put(
 
 //Delete a room
 router.delete(
-     '/roomId',
+     '/:roomId',
 	async (request, response, next) => {
           try {
-               const roomId = request.params.roomId;
+               const roomId = await getARoom({_id: request.params.roomId});
                
+               if (!roomId) {
+                    return response.status(404).json({message: 'Room not found'});
+               }
+
                const deleteRoom = await deleteRoomDetails(roomId);
 
+
                return response.json('Room successfully deleted.');
+
           } catch (error) {
                next(error);
           }

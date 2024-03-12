@@ -90,6 +90,10 @@ app.get("/databaseHealth", (request, response) => {
 
 
 // Pawtel utilises the following routes:
+
+const roomsRouter = require('./controllers/RoomsController');
+app.use("/rooms", roomsRouter);
+
 const petRouter = require('./controllers/PetController');
 app.use("/pets", petRouter);
 

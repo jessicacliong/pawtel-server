@@ -1,4 +1,4 @@
-const { Room } = require("./models/RoomModel")
+const { Room } = require("../models/RoomModel")
 
 const dotenv = require('dotenv');
 dotenv.config();
@@ -6,12 +6,14 @@ dotenv.config();
 // --------------------------------------
  // ----- MongoDB/MongooseJS functionality
 
+// Returns an array of all rooms registered in database
 async function getAllRooms() {
      return allRooms = await Room.find({});
 }
 
+// Returns a room based on roomId number
 async function getARoom(roomId) {
-     return await Booking.findOne({_id: roomId});
+     return await Room.findOne({_id: roomId});
 }
 
 // Create new room
@@ -25,7 +27,7 @@ async function createNewRoom(roomDetails) {
    return await newRoom.save();
 }
 
-// Update pet details
+// Update room details
 async function updateRoomDetails(roomDetails) {
      try {
      return await Room.findByIdAndUpdate(
@@ -38,7 +40,7 @@ async function updateRoomDetails(roomDetails) {
 }
 };
 
-// Delete a pet
+// Delete a room
 async function deleteRoomDetails(roomId) {
      return await Room.findByIdAndDelete(roomId).exec();
 }
