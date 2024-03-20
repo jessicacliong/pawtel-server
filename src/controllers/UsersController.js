@@ -14,6 +14,7 @@ const {
   validateHashedData,
   generateUserJWT,
   verifyUserJWT,
+  verifyJwtRole,
   getUserIdFromJwt,
   filterUndefinedProperty,
   getAllUsers,
@@ -25,10 +26,16 @@ const {
 
 const {
   verifyJwtHeader,
+  handleJwtVerificationError,
+  handleGenericError,
   errorHandler,
   uniqueEmailCheck
 } = require('../middleware/checkMiddleware');
 
+
+const {
+  filterUsersMiddleware
+} = require('../middleware/filteringMiddleware');
 
 // Register a new user
 // /users/register
@@ -44,6 +51,7 @@ router.post(
           email: request.body.email,
           username: request.body.username,
           password: request.body.password,
+          roleID: request.body.roleID
         };
       
         let newUser = await createUser(userDetails);
@@ -101,20 +109,30 @@ router.post(
 // /users/
 router.get(
   '/',
+    verifyJwtHeader,
+    verifyJwtRole,
+    filterUsersMiddleware,
     async (request, response) => {
+    try {
       let allUsers = await getAllUsers();
 
       response.json({
         userCount: allUsers.length,
         users: allUsers
     });
-  });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 // Get user by id
 // /users/:userId
 router.get(
   '/:userId', 
   // verifyJwtHeader,
+  // verifyJwtRole,
+  // filterUsersMiddleware,
      async (request, response, next) => {
       try {
         const user = await User.findOne({_id: request.params.userId});
@@ -133,7 +151,7 @@ router.get(
 
 // Update an existing user
 router.put('/:userId',
-verifyJwtHeader, 
+// verifyJwtHeader, 
 async (request, response, next) => {
   try {
     const requestingUserId = await getUserIdFromJwt(request.headers.jwt);
@@ -151,6 +169,7 @@ async (request, response, next) => {
       email,
       username,
       password,
+      roleID
     } = request.body;
 
     const userDetails = {
@@ -161,6 +180,7 @@ async (request, response, next) => {
         email,
         username,
         password,
+        roleID
       }),
     };
 

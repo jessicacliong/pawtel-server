@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const { databaseConnector, getDatabaseURL } = require('./database');
 
 // import models
+const { Role } = require('./models/RoleModel');
 const { Pet } = require('./models/PetModel');
 const { User } = require('./models/UserModel');
 const { Booking } = require('./models/BookingModel');
@@ -35,7 +36,20 @@ async function seedDatabase() {
             await mongoose.connection.db.dropCollection(collection.name);
            })
         );
+        console.log("Old DB data deleted.");
     }
+
+    const roles = [
+        {
+            name: 'customer',
+            description:"A regular user can view, create and read data. They can edit and delete only their own data."
+        },
+        {
+            name: 'staff',
+            description:"An admin user has full access and permissions to do anything and everything within this API."    
+        }
+    ]
+
     const users = [
         {
             firstName: 'John',
@@ -43,6 +57,8 @@ async function seedDatabase() {
             email: 'johnsmith@email.com',
             username: 'johnsmith',
             password: 'john12345',
+            role: null,
+
         },
         {
             firstName: 'Alice',
@@ -50,6 +66,7 @@ async function seedDatabase() {
             email: 'alicebrenner@email.com',
             username: 'alicebrenner',
             password: 'alice12345',
+            role: null,
         },
         {
             firstName: 'Bob',
@@ -57,6 +74,7 @@ async function seedDatabase() {
             email: 'bobcooper@email.com',
             username: 'bobcooper',
             password: 'bob12345',
+            role: null,
         }
     ];
 
@@ -113,6 +131,8 @@ async function seedDatabase() {
         }
     ];
 
+    // Add user roles into the database
+    const rolesCreated = await Role.insertMany(roles);
 
     // Hash passwords and create users
     // Iterate through the users array
@@ -120,6 +140,11 @@ async function seedDatabase() {
         
         // Hash the password of the user
         user.password = await hashString(user.password);
+
+        // Allocate roles to users
+        users[0].role = rolesCreated[0].id
+        users[1].role = rolesCreated[0].id
+        users[2].role = rolesCreated[1].id
     }
     // Save the users to the database.
     const usersCreated = await User.insertMany(users);
@@ -143,6 +168,7 @@ async function seedDatabase() {
         'New DB data created\n' + 
             JSON.stringify(
                 {
+                    roles: rolesCreated,
                     users: usersCreated,
                     pets: petsCreated,
                     bookings: bookingsCreated,

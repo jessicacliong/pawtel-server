@@ -7,6 +7,7 @@ const verifyJwtHeader = async (request, response, next) => {
     const rawJwtHeader = request.headers.jwt;
 
     let jwtRefresh;
+
     try {
       jwtRefresh = await verifyUserJWT(rawJwtHeader);
     } catch (error) {
@@ -17,6 +18,7 @@ const verifyJwtHeader = async (request, response, next) => {
     request.headers.jwt = jwtRefresh;
     
     next();
+    
   } catch (error) {
     handleGenericError(error, response);
   }
@@ -84,9 +86,9 @@ const uniqueEmailCheck = async (request, response, next) => {
 };
 
 module.exports = {
-     verifyJwtHeader,
-     handleJwtVerificationError,
-     handleGenericError,
-     errorHandler,
-     uniqueEmailCheck
+    verifyJwtHeader,
+    handleJwtVerificationError,
+    handleGenericError,
+    errorHandler,
+    uniqueEmailCheck
 };

@@ -31,7 +31,11 @@ const UserSchema = new mongoose.Schema({
           unique: false,
           minLength: [8, 'Password should be at least 8 characters long'],
      },
- });
+     role: {
+          type: mongoose.Types.ObjectId, 
+          ref: 'Role'
+     }
+});
 
  // User Prehook to save user information and inclue crypting password middleware
 UserSchema.pre(

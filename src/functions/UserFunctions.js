@@ -1,6 +1,7 @@
 // Require specific models so that we can 
 // create functionality involving them.
 const { User } = require('../models/UserModel');
+const { Role } = require('../models/RoleModel');
 
 const dotenv = require('dotenv');
 dotenv.config();
@@ -62,7 +63,7 @@ const jwt = require('jsonwebtoken');
 
 // Generates JSON Web Token (JWT) with provided payload
 function generateJWT(payloadObj) {
-  return jwt.sign(payloadObj, process.env.JWT_KEY, {expiresIn: '9h'});
+  return jwt.sign(payloadObj, process.env.JWT_KEY, { expiresIn: "7d" });
 }
 
 // Generates a JWT with an encrypted payload containing user details.
@@ -106,33 +107,29 @@ async function verifyUserJWT(userJWT) {
     // If the JWT data matches the stored data
     if (
       targetUser &&
-      (targetUser.password == userData.password) &&
-      targetUser.email == userData.email
+      (targetUser.password == userData.password &&
+      targetUser.email == userData.email)
     ) {
       // User details are valid, make a fresh JWT to extend their token's valid time
-      const newToken = generateJWT({ data: userJwtVerified.payload.data });
-      
-      // Return the new token to the client 
-      return newToken;
+      return generateJWT({ data: userJwtVerified.payload.data });
     } else {
       // Otherwise, user details are invalid and they don't get a new token.
       // When a frontend receives this error, it should redirect to a sign-in page.
-      throw new Error('Invalid user token.');
+      throw new Error({ message: "Invalid user token." });
     }
   } catch (error) {
     console.error(error);
 
     if (error.message === 'Token expired') {
       // Throw an error with a specific message for token expiration
-      throw new Error('TokenExpired');
+      throw new Error({ message: 'TokenExpired'});
     } else {
       // Throw a generic error for other verification errors
-      throw new Error('InvalidToken');
+      throw new Error({ message: 'InvalidToken'});
     }
   }
 }
 
-   
 
 // Returns the user Id extracted from a user JWT.
 
@@ -153,9 +150,9 @@ async function getUserIdFromJwt(userJWT) {
 
     // If the JWT data matches the stored data...
     if (
-      targetUser &&
-      targetUser.password == userData.password &&
-      targetUser.email == userData.email
+      // targetUser &&
+      ( targetUser.password == userData.password &&
+      targetUser.email == userData.email )
     ) {
       // Return the user Id
       return userData.userId;
@@ -169,6 +166,28 @@ async function getUserIdFromJwt(userJWT) {
   }
 }
 
+const verifyJwtRole = async (request, response, next) => {
+  // Verify that the JWT is still valid.
+  let userJwtVerified = jwt.verify(request.headers.jwt,process.env.JWT_KEY, {complete: true});
+  // Decrypt the encrypted payload.
+  let decryptedJwtPayload = decryptString(userJwtVerified.payload.data);
+  // Parse the decrypted data into an object.
+  let userData = JSON.parse(decryptedJwtPayload);
+  
+  // Because the JWT doesn't include role info, we must find the full user document first:
+  let userDoc = await User.findById(userData.userId).exec();
+  let userRoleName = await Role.findById(userDoc.role).exec();
+
+  // Attach the role to the request for the backend to use.
+  // Note that the user's role will never be available on the front-end
+  // with this technique.
+  // This means they can't just manipulate the JWT to access admin stuff.
+  console.log("User role is: " + userRoleName.name);
+  request.headers.userRole = userRoleName.name;
+  request.headers.userId = userDoc.id.toString();
+
+  next();
+}
 
 
    
@@ -190,6 +209,7 @@ async function createUser(userDetails) {
        email: userDetails.email,
        username: userDetails.username,
        password: userDetails.password,
+       roleID: userDetails.roleID
      });
    
      // And save it to DB
@@ -252,6 +272,7 @@ module.exports = {
      generateUserJWT,
      getUserIdFromJwt,
      verifyUserJWT,
+     verifyJwtRole,
      getAllUsers,
      createUser,
      updateUser,
