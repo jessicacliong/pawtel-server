@@ -130,9 +130,9 @@ router.get(
 // /users/:userId
 router.get(
   '/:userId', 
-  // verifyJwtHeader,
-  // verifyJwtRole,
-  // filterUsersMiddleware,
+  verifyJwtHeader,
+  verifyJwtRole,
+  filterUsersMiddleware,
      async (request, response, next) => {
       try {
         const user = await User.findOne({_id: request.params.userId});
