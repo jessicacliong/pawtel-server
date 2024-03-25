@@ -51,7 +51,7 @@ router.post(
           email: request.body.email,
           username: request.body.username,
           password: request.body.password,
-          roleID: request.body.roleID
+          role: request.body.role
         };
       
         let newUser = await createUser(userDetails);
@@ -150,73 +150,64 @@ router.get(
   );
 
 // Update an existing user
-router.put('/:userId',
-// verifyJwtHeader, 
-async (request, response, next) => {
-  try {
-    const requestingUserId = await getUserIdFromJwt(request.headers.jwt);
-    const targetUserId = request.params.userId;
-
-    // Check if the user making the request is the same as the user whose data is being deleted
-    if (requestingUserId !== targetUserId) {
-      return response.status(403)
-        .json({message: 'Unauthorised: You can only update your own account'});
-    }
-
-    const {
-      firstName,
-      lastName,
-      email,
-      username,
-      password,
-      roleID
-    } = request.body;
-
-    const userDetails = {
-      userId: request.params.userId,
-      updatedData: filterUndefinedProperty({
-        firstName,
-        lastName,
-        email,
-        username,
-        password,
-        roleID
-      }),
-    };
-
-    const updatedUser = await updateUser(userDetails);
-
-    return response.json(updatedUser);
-  } catch (error) {
-    next(error);
-  }
-});
-
-// Delete user account
-// Will action if the request has the same userId
-router.delete(
-  '/:userId', 
+// /users/:userId 
+// Action will execute if user is authorised to perform the action
+router.put(
+  '/:userId',
   verifyJwtHeader, 
-  async (request, response, next) => {
-    try {
-      const requestingUserId = await getUserIdFromJwt(request.headers.jwt);
-      const targetUserId = request.params.userId;
+  verifyJwtRole,
+  filterUsersMiddleware,
+    async (request, response, next) => {
+      try {
+        const {
+          firstName,
+          lastName,
+          email,
+          username,
+          password,
+          role
+        } = request.body;
 
-      // Check if the user making the request is the same as the user whose data is being deleted
-      if (requestingUserId !== targetUserId) {
-        return response.status(403)
-          .json({message: 'Unauthorised. You can only delete your own account.',
-        });
+        const userDetails = {
+          userId: request.params.userId,
+          updatedData: filterUndefinedProperty({
+            firstName,
+            lastName,
+            email,
+            username,
+            password,
+            role
+          }),
+        };
+
+        const updatedUser = await updateUser(userDetails);
+
+        return response.json(updatedUser);
+      } catch (error) {
+        next(error);
       }
-
-      // Proceed with the delete operation
-      const deletedUser = await deleteUser(targetUserId);
-
-      return response.json({message: 'User successfully deleted.'});
-    } catch (error) {
-      next(error);
     }
-});
+  );
+
+// Delete an existing user
+// /users/:userId 
+// Action will execute if user is authorised to perform the action
+  router.delete(
+    '/:userId', 
+    verifyJwtHeader, 
+    verifyJwtRole,
+    filterUsersMiddleware,
+    async (request, response, next) => {
+      try {
+        // Proceed with the delete operation
+        const deletedUser = await deleteUser({_id:request.params.userId});
+
+          return response.json({message: 'User successfully deleted.'});
+      } catch (error) {
+        next(error);
+      }
+    }
+);
 
 
 module.exports = router;

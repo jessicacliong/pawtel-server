@@ -209,7 +209,7 @@ async function createUser(userDetails) {
        email: userDetails.email,
        username: userDetails.username,
        password: userDetails.password,
-       roleID: userDetails.roleID
+       role: userDetails.role
      });
    
      // And save it to DB
