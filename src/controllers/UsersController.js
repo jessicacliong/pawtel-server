@@ -26,8 +26,6 @@ const {
 
 const {
   verifyJwtHeader,
-  handleJwtVerificationError,
-  handleGenericError,
   errorHandler,
   uniqueEmailCheck
 } = require('../middleware/checkMiddleware');
@@ -165,7 +163,7 @@ router.put(
           email,
           username,
           password,
-          role
+          role,
         } = request.body;
 
         const userDetails = {
@@ -176,7 +174,7 @@ router.put(
             email,
             username,
             password,
-            role
+            role,
           }),
         };
 

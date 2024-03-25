@@ -189,7 +189,6 @@ const verifyJwtRole = async (request, response, next) => {
   next();
 }
 
-
    
 
 // --------------------------------------
@@ -219,18 +218,22 @@ async function createUser(userDetails) {
 
 // Update an existing user and returns updated user data
 async function updateUser(userDetails) {
-     // Hash the password if it's provided in the userDetails
-     if (userDetails.updatedData.password) {
-       userDetails.updatedData.password = await hashString(userDetails.updatedData.password);
-     }
-   
-     // Find user, update it, return the updated user data.
-     return await User.findByIdAndUpdate(
-       userDetails.userId,
-       userDetails.updatedData,
-       { returnDocument: 'after' }
-     ).exec();
-}
+    try {
+    // Hash the password if it's provided in the userDetails
+    if (userDetails.updatedData.password) {
+      userDetails.updatedData.password = await hashString(userDetails.updatedData.password);
+    }
+  
+    // Find user, update it, return the updated user data.
+    return await User.findByIdAndUpdate(
+      userDetails.userId,
+      userDetails.updatedData,
+      { returnDocument: 'after' }
+    ).exec();
+    } catch (error) {
+      throw new Error(`Error updating user details: ${error.message}`);
+    }
+};
 
 //Deletes an existing user by Id
 async function deleteUser(userId) {

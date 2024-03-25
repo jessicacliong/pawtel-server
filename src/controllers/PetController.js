@@ -7,10 +7,12 @@ const { Pet } = require('../models/PetModel');
 const router = express.Router()
 
 const { 
+     verifyJwtHeader,
+     handleJwtVerificationError,
+     handleGenericError,
      errorHandler,
-     verifyJwtHeader, 
+     uniqueEmailCheck
 } = require('../middleware/checkMiddleware');
-
 
 
 const {
@@ -22,13 +24,20 @@ const {
      filterUndefinedProperties
 } = require('../functions/PetFunctions');
 
+const {
+     filterUsersMiddleware,
+     filterPetsMiddleware
+} = require('../middleware/filteringMiddleware');
+
 const { 
-     filterUndefinedProperty 
+     verifyJwtRole, filterUndefinedProperty
 } = require('../functions/UserFunctions');
 
 router.get(
      '/',
-    // verifyJwtHeader,
+     verifyJwtHeader,
+     verifyJwtRole,
+     filterUsersMiddleware,
      async (request, response) => {
           let result = await getAllPets();
           response.json({
@@ -38,7 +47,9 @@ router.get(
 
 router.get(
      '/:petId',
-     //  verifyJwtHeader,
+     verifyJwtHeader,
+     verifyJwtRole,
+     filterPetsMiddleware,
      async (request, response, next) => {
           try {
                const pet = await getOnePet({_id: request.params.petId});
@@ -54,7 +65,7 @@ router.get(
 
 router.post(
      '/',
-     // verifyJwtHeader,
+     verifyJwtHeader,
      errorHandler,
      async (request, response) => {
           try {
@@ -84,7 +95,9 @@ router.post(
 
 router.put(
      '/:petId',
-     // verifyJwtHeader,
+     verifyJwtHeader,
+     verifyJwtRole,
+     filterPetsMiddleware,
      errorHandler,
      async (request, response, next) => {
           try {
@@ -110,7 +123,7 @@ router.put(
 
                const petDetails = {
                     petId: request.params.petId,
-                    updatedData: filterUndefinedProperties({
+                    updatedData: filterUndefinedProperty({
                          name,
                          animalType,
                          breed,
@@ -128,13 +141,16 @@ router.put(
 
                return response.json(updatedPet);
           } catch (error) {
-               next (error);
+               next(error);
           }
-     });
+     }
+);
 
 router.delete(
      '/:petId', 
-     // verifyJwtHeader,
+     verifyJwtHeader,
+     verifyJwtRole,
+     filterPetsMiddleware,
      errorHandler,
           async (request, response, next) => {
                try {
