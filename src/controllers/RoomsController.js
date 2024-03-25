@@ -16,25 +16,45 @@ const {
 } = require('../functions/RoomsFunctions');
 
 const { 
-     errorHandler,
+     verifyJwtRole
+ } = require('../functions/UserFunctions');
+
+const {
      verifyJwtHeader, 
 } = require('../middleware/checkMiddleware');
+
+const { 
+     filterRolesMiddleware
+} = require('../middleware/filteringMiddleware');
 
 
 // GET all rooms
 router.get(
      '/',
-     async (request, response) => {
-          let result = await getAllRooms();
-          response.json({
-               result
-          });
+     verifyJwtHeader,
+     verifyJwtRole,
+     filterRolesMiddleware,
+     async (request, response, next) => {
+          try {
+               let allRooms = await getAllRooms();
+               
+               response.json({
+                    roomsCount: result.length, 
+                    rooms: allRooms
+               });
+
+          } catch (error) {
+               next(error);
+
      }
-);
+});
 
 // GET room by roomId
 router.get(
      '/:roomId', 
+     verifyJwtHeader,
+     verifyJwtRole,
+     filterRolesMiddleware,
      async (request, response, next) => {
           try {
                const room = await getARoom({_id:request.params.roomId})
@@ -73,6 +93,9 @@ router.post(
 // Update room details
 router.put(
      '/:roomId',
+     verifyJwtHeader,
+     verifyJwtRole,
+     filterRolesMiddleware,
 	async (request, response, next) => {
           try {
 
@@ -106,6 +129,9 @@ router.put(
 //Delete a room
 router.delete(
      '/:roomId',
+     verifyJwtHeader,
+     verifyJwtRole,
+     filterRolesMiddleware,
 	async (request, response, next) => {
           try {
                const roomId = await getARoom({_id: request.params.roomId});

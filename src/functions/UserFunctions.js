@@ -189,8 +189,6 @@ const verifyJwtRole = async (request, response, next) => {
   next();
 }
 
-   
-
 // --------------------------------------
 // ----- MongoDB/MongooseJS functionality
 

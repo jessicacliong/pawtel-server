@@ -38,7 +38,7 @@ const filterPetsMiddleware = async (request, response, next) => {
     const userIDofPet = await Pet.findById(request.params.petId).exec()
     .then((data) => {return data.userId});
 
-    if ( requestingUserId == userIDofPet || request.headers.userRole == "staff") {
+    if ( requestingUserId == userIDofPet || request.headers.userRole == "staff" ) {
       next ();
       } else 
         return response
@@ -50,10 +50,22 @@ const filterPetsMiddleware = async (request, response, next) => {
   }
 };
 
-
+const filterRolesMiddleware = async (request, response, next) => {
+  try {
+    if ( request.headers.userRole == "staff" ) {
+      next();
+    } else 
+    return response
+      .status(403)
+      .json({message: 'User unauthorised to perform action.'});
+  } catch(error) {
+    next(error)
+  }
+};
 
 
 module.exports = {
      filterUsersMiddleware,
      filterPetsMiddleware,
+     filterRolesMiddleware,
 };

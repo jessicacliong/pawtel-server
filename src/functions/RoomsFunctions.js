@@ -33,11 +33,11 @@ async function updateRoomDetails(roomDetails) {
      return await Room.findByIdAndUpdate(
           roomDetails.roomId,
           roomDetails.updatedData,
-          { new: true }
+          { returnDocument: 'after' }
      ).exec();
      } catch (error) {
      throw new Error(`Error updating room: ${error.message}`);
-}
+     }
 };
 
 // Delete a room
