@@ -39,7 +39,7 @@ router.get(
                let allRooms = await getAllRooms();
                
                response.json({
-                    roomsCount: result.length, 
+                    roomsCount: allRooms.length, 
                     rooms: allRooms
                });
 
@@ -73,6 +73,9 @@ router.get(
 // Create a new room
 router.post(
      '/',
+     verifyJwtHeader,
+     verifyJwtRole,
+     filterRolesMiddleware,
 	async (request, response, next) => {
           try {
                const roomDetails = {
@@ -126,7 +129,7 @@ router.put(
           }
      });
 
-//Delete a room
+// Delete a room
 router.delete(
      '/:roomId',
      verifyJwtHeader,

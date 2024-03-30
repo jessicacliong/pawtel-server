@@ -15,11 +15,10 @@ const {
 
 const filterUsersMiddleware = async (request, response, next) => {
   try {
-
     const requestingUserId = await getUserIdFromJwt(request.headers.jwt);
     const targetUserId = request.params.userId;
 
-      if ( targetUserId == requestingUserId || request.headers.userRole == "staff") {
+      if ( targetUserId == requestingUserId || request.headers.userRole == "staff" ) {
       next ();
       } else 
         return response
