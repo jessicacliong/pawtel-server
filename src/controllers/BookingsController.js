@@ -12,19 +12,21 @@ const {
      createBooking,
      updateBooking,
      deleteBooking,
-	filterUndefinedProperties,
-     validateRoomBookedByPet,
-     validateUserPermission
+	filterUndefinedProperties
 } = require('../functions/BookingsFunctions');
 
-const { getUserIdFromJwt } = require('../functions/UserFunctions');
-const { verifyJWTHeader } = require('../middleware/checkMiddleware');
+const { verifyJwtHeader } = require('../middleware/checkMiddleware');
+const { filterRolesMiddleware, filterPetsMiddleware, filterBookingsMiddleware } = require('../middleware/filteringMiddleware');
+const { verifyJwtRole } = require('../functions/UserFunctions');
 
 //Authenticate user for all routes
 
 // GET all bookings
 router.get(
 	'/', 
+	verifyJwtHeader,
+	verifyJwtRole,
+     filterRolesMiddleware,
 		async (request, response) => {
 			let allBookings = await getAllBookings();
 
@@ -38,6 +40,9 @@ router.get(
 // GET booking with :id
 router.get(
 	'/:bookingId',
+     verifyJwtHeader,
+     verifyJwtRole,
+     filterBookingsMiddleware,
 		async (request, response, next) => {
 			try {
 				const booking = await getABooking({_id: request.params.bookingId});
@@ -57,6 +62,9 @@ router.get(
 	
 // Create a booking
 router.post('/',
+	verifyJwtHeader,
+	verifyJwtRole,
+	filterBookingsMiddleware,
 	async (request, response, next) => {
 		try {
 			const bookingDetails = {
@@ -79,8 +87,10 @@ router.post('/',
 
 // Update a certain booking
 router.put('/:bookingId',
+	verifyJwtHeader,
+	verifyJwtRole,
+	filterBookingsMiddleware,
 	async (request, response, next) => {
-	// const requestingUserId = await getUserIdFromJwt(request.headers.jwt);
 	try {	
 		const booking = await getABooking({_id: request.params.bookingId});
 
@@ -88,12 +98,6 @@ router.put('/:bookingId',
 			return response.status(404).json({message: 'Booking not found'});
 		}
 
-	// 	if (!validateUserPermission(booking, requestingUserId)) {
-	// 		return response.status(403).json({
-	// 		error: 'Forbidden',
-	// 		message: 'You do not have permission to update this booking',
-	// 		});
-	// 	}
 		const {
 			roomType,
 			startTime,
@@ -111,9 +115,9 @@ router.put('/:bookingId',
 			}),
 		   };
 
-		   const updatedBooking = await updateBooking(bookingDetails);
-	    
-		   return response.json(updatedBooking);
+		const updatedBooking = await updateBooking(bookingDetails);
+	
+		return response.json(updatedBooking);
 		} catch (error) {
 			next(error);
 	}
@@ -121,34 +125,26 @@ router.put('/:bookingId',
 	
 // Delete a booking
 router.delete("/:bookingId",
+	verifyJwtHeader,
+	verifyJwtRole,
+	filterBookingsMiddleware,
 	async (request, response, next) => {
-	// const requestingUserId = await getUserIdFromJwt(request.headers.jwt);
- 
-	// try {
+	try {
 		const booking = await getABooking(request.params.bookingId);
 
 		if (!booking) {
 		return response.status(404).json({message: 'Booking not found'});
 		}
- 
-	//   if (validateUserPermission(booking, requestingUserId)) {
-	
-	try {
+
 		const deletedBooking = await deleteBooking(request.params.bookingId);
-		response.json({
+		return response.json({
 			message: 'Booking deleted successfully',
 			booking: deletedBooking,
 		});
-	//   } else {
-	//     response.status(403).json({
-	// 	 message: 'Unauthorised. You do not have permission.',
-	//     });
-	//   }
 	} catch (error) {
-	  next(error);
+	next(error);
 	}
-   }
- );
+});
 
 module.exports = router;
 

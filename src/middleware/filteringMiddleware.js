@@ -49,6 +49,29 @@ const filterPetsMiddleware = async (request, response, next) => {
   }
 };
 
+const filterBookingsMiddleware = async (request, response, next) => {
+  try {
+    const requestingUserId = await getUserIdFromJwt(request.headers.jwt);
+      
+    let petIDofBooking = await Booking.findById(request.params.bookingId).exec()
+    .then((data) => {return data.petId})
+
+    ownerIdOfPet = await Pet.findById({_id: petIDofBooking}).exec()
+    .then((data) => {return data.userId})
+
+    if ( requestingUserId ==  ownerIdOfPet || request.headers.userRole == "staff" ) {
+      next ();
+      } else 
+        return response
+          .status(403)
+          .json({message: 'User unauthorised to perform action.'});
+
+  } catch (error) {
+    errorHandler(error, request, response, next);
+  }
+};
+
+
 const filterRolesMiddleware = async (request, response, next) => {
   try {
     if ( request.headers.userRole == "staff" ) {
@@ -66,5 +89,6 @@ const filterRolesMiddleware = async (request, response, next) => {
 module.exports = {
      filterUsersMiddleware,
      filterPetsMiddleware,
+     filterBookingsMiddleware,
      filterRolesMiddleware,
 };
